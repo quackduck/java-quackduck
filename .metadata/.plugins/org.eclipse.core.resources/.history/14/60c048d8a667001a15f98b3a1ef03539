@@ -1,0 +1,29 @@
+
+public class FindDuplicateInt {
+	
+	public static int[] thing = {0, 1, 2, 3, 3};
+	public static int[] thing1 = {0, 1, 2, 2, 3};
+	public static int[] thing2 = {0, 1, 1, 2, 3};
+	public static int[] thing3 = {0, 0, 2, 3, 4};
+	
+	public static void main(String[] args) {
+		new FindDuplicateInt().find(thing);
+	}
+	
+	public int find(int[] arr) {
+		
+		int result = 0;
+		int expectedSum = 0;
+		int actualSum = 0;
+		for (int i = 0; i < (arr.length - 1); i++) {
+			expectedSum += i;
+		}
+		
+		for (int i = 0; i < arr.length - 1; i++) {
+			actualSum += arr[i];
+		}
+		
+		return arr[0];
+	}
+
+}

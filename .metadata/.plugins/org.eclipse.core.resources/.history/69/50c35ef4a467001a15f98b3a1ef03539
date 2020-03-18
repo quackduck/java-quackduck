@@ -1,0 +1,16 @@
+
+public class FindDuplicateInt {
+
+	public static void main(String[] args) {
+
+	}
+	
+	public int find(int[] arr) {
+		
+		int result = 0;
+		
+		
+		return arr[0];
+	}
+
+}

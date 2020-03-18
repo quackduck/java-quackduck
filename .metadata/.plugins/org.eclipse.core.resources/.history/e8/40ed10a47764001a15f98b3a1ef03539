@@ -1,0 +1,12 @@
+
+public class RockPaperScissors {
+
+	public static void main(String[] args) {
+		new RockPaperScissors().go;
+
+	}
+	
+	public void go () {
+		
+	}
+}

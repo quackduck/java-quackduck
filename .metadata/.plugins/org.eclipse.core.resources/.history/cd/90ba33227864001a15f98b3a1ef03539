@@ -1,0 +1,18 @@
+
+public class RockPaperScissors {
+	
+	public String[] things = {"Rock", "Paper", "Scissors"};
+
+	public static void main(String[] args) {
+		new RockPaperScissors().go();
+
+	}
+	
+	public void go () {
+		
+	}
+	
+	public String generate( ) {
+		
+	}
+}

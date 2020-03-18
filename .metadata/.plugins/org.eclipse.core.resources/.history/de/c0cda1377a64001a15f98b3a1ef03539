@@ -1,0 +1,31 @@
+import java.util.Scanner;
+
+public class RockPaperScissors {
+	public Scanner in = new Scanner(System.in);
+	public String[] things = {"Rock", "Paper", "Scissors"};
+
+	public static void main(String[] args) {
+		new RockPaperScissors().go();
+
+	}
+	
+	public void go () {
+		String input = in.nextLine();
+		System.out.println(generate());
+	}
+	
+	public String generate( ) {
+		return things[(int) Math.floor((3 * Math.random()))];
+	}
+	
+	public String eval(String a , String b) {
+		if (a.equalsIgnoreCase(b)) {return "We both selected the same thing";}
+		else if (a.equalsIgnoreCase("rock") && b.equalsIgnoreCase("paper")) { return "You win!";}
+		else if (b.equalsIgnoreCase("rock") && a.equalsIgnoreCase("paper")) { return "You lose";}
+		else if (a.equalsIgnoreCase("paper") && b.equalsIgnoreCase("scissor")) {return "You win!";}
+		else if (b.equalsIgnoreCase("paper") && a.equalsIgnoreCase("scissor")) {return "You lose";}
+		else if (a.equalsIgnoreCase("scissor") && b.equalsIgnoreCase("paper")) {return "You lose";}
+		else if (b.equalsIgnoreCase("scissor") && a.equalsIgnoreCase("paper")) {return "You win!";}
+		else {return "INVALID ARGUMENT(s)";} 
+	}
+}

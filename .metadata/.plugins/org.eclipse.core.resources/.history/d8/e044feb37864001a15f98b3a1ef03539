@@ -1,0 +1,25 @@
+
+public class RockPaperScissors {
+	
+	public String[] things = {"Rock", "Paper", "Scissors"};
+
+	public static void main(String[] args) {
+		new RockPaperScissors().go();
+
+	}
+	
+	public void go () {
+		System.out.println(generate());
+	}
+	
+	public String generate( ) {
+		return things[(int) Math.floor((3 * Math.random()))];
+	}
+	
+	public String eval(String a , String b) {
+		if () {}
+		else if () {}
+		else if () {}
+		else {return ""} 
+	}
+}

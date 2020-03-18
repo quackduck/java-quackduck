@@ -1,0 +1,138 @@
+import java.io.*;
+import java.net.*;
+import java.util.Scanner;
+//import java.util.*;
+import javax.swing.*;
+import javax.swing.text.DefaultCaret;
+import java.awt.*;
+import java.awt.event.*;
+
+
+public class SimpleChatClient {
+
+
+
+	public static String PrivateIPofServer = "10.10.33.5"; // this is my IP (I'm hosting the server on my computer)
+	public static int PortOfServer = 5000; // Leave this alone
+
+
+	public static String yourName;
+	JTextArea incoming;
+	JTextField outgoing;
+	BufferedReader reader;
+	PrintWriter writer;
+	Socket sock;
+	public static void main(String[] args) {
+		Scanner scannerIn = new Scanner(System.in);
+		System.out.println("Enter your chat username");
+		yourName = scannerIn.nextLine();
+		System.out.println("Enter Server Address (or press enter to use default)");
+		PrivateIPofServer = scannerIn.nextLine();
+		if (PrivateIPofServer.equals("")) {
+			PrivateIPofServer = "chatserver.local";
+		}
+		scannerIn.close();
+		SimpleChatClient client = new SimpleChatClient();
+		client.go();
+	}
+
+	public void go() {
+		JFrame frame = new JFrame ("Ludicrously Simple Chat Client");
+		JPanel mainPanel = new JPanel();
+		incoming = new JTextArea (15,20);
+		DefaultCaret caret = (DefaultCaret) incoming.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		incoming.setLineWrap(true);
+		incoming.setWrapStyleWord(true);
+		incoming.setEditable(false);
+		JScrollPane qScroller = new JScrollPane(incoming);
+		qScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		qScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		outgoing = new JTextField(30);
+		outgoing.addKeyListener(new KeyPressListener());
+		mainPanel.add(qScroller);
+		mainPanel.add(outgoing);
+		setUpNetworking();
+
+		Thread readerThread = new Thread (new IncomingReader());
+		readerThread.start();
+
+		frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
+		frame.setSize(800, 500);
+		frame.setVisible(true);
+	}
+
+	private void setUpNetworking() {
+		try {
+			sock = new Socket(PrivateIPofServer, PortOfServer);
+			InputStreamReader streamReader = new InputStreamReader(sock.getInputStream());
+			reader = new BufferedReader(streamReader);
+			writer = new PrintWriter(sock.getOutputStream());
+			writer.println(yourName + " has joined the chat");
+			writer.flush();
+			System.out.println("networking established");
+		} catch(IOException ex) {ex.printStackTrace();}
+	}
+
+	public class KeyPressListener implements KeyListener {
+
+		public void keyTyped(KeyEvent e) {
+
+		}
+
+		public void keyPressed(KeyEvent e) {
+
+		}
+
+		public void keyReleased(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				sendStuff();
+			}
+		}
+	}
+
+	public void sendStuff() {
+		String text = outgoing.getText().strip();
+		try {
+			switch(text) {
+			case "clear":
+				incoming.setText("");
+				break;
+			case "bye":
+				writer.println(yourName + ":  " + text);
+				writer.flush();
+				writer.println(yourName + " has left the chat");
+				writer.flush();
+				writer.close();
+				System.exit(0);
+				break;
+			case "close":
+			case "exit":
+				writer.println(yourName + " has left the chat");
+				writer.flush();
+				writer.close();
+				System.exit(0);
+				break;
+			case "":
+				break;
+			default:
+				writer.println(yourName + ":  " + text);
+				writer.flush();
+			}
+		} catch(Exception ex) {ex.printStackTrace();}
+		outgoing.setText("");
+		outgoing.requestFocus();
+	}
+
+	public class IncomingReader implements Runnable {
+		public void run () {
+			String message;
+			try {
+				while ((message = reader.readLine()) != null) {
+					System.out.println("read " + message);
+					incoming.append(message + System.lineSeparator());
+				}
+			} catch (Exception ex) {ex.printStackTrace();}
+		}
+	}
+}

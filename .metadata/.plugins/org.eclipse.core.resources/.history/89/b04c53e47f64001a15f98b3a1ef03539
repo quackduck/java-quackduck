@@ -1,0 +1,28 @@
+import java.util.regex.*;
+public class QuestionMarks {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+	public static String QuestionsMarks(String str) { 
+		  
+		  str = str.replaceAll("[a-z]+","");
+		  Pattern pattern = Pattern.compile("([0-9])([?])([?])([?])([0-9])");
+		  Pattern pattern01 = Pattern.compile("([0-9])([?])([?])([0-9])");
+		  Matcher matcher01 = pattern01.matcher(str);
+		  Pattern pattern02 = Pattern.compile("([0-9])([?])([0-9])");
+		  Matcher matcher02 = pattern02.matcher(str);
+		  Matcher matcher = pattern.matcher(str);
+
+		  if (matcher01.find() || matcher02.find()) {
+		    return "false";
+		  } else if (matcher.find()) {
+		    return "true";
+		  }
+		  
+		  return "false";
+		  
+		}
+
+}
