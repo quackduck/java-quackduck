@@ -119,7 +119,6 @@ public class ReadWrite {
 	
 	public boolean exists() {
 		file = new File(path);
-		file.
 		return file.exists();
 	}
 }
