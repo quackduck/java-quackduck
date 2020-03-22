@@ -7,7 +7,7 @@ import java.net.*;
 
 public class Scraper {
 
-	public String address = "";
+	private String address = "";
 	private String website = "";
 	private String file = "";
 	private Socket sock = new Socket();
@@ -20,12 +20,6 @@ public class Scraper {
 		scraper.setAddress("www.google.com/imghp");
 		scraper.doRequest();
 		System.out.println(scraper.everything() + scraper.data());
-
-	}
-
-	private String go() {
-		doRequest();
-		return everything;
 	}
 
 	public void doRequest() {

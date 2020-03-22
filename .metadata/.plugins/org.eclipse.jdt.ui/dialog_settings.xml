@@ -56,8 +56,9 @@
 		<item key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION" value="/Users/ishan/Desktop/eclipse"/>
 		<item key="FatJarPackageWizardPage.LIBRARY_HANDLING" value="1"/>
 		<item key="FatJarPackageWizardPage.LAUNCH_CONFIGURATION_SELECTION_NAME" value="SimpleChatClient - Chat"/>
-		<item key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION" value="/Users/ishan/Desktop/GitHub/quackduck.github.io/SimpleChatClient.jar"/>
+		<item key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION" value="/Users/ishan/Desktop/GitHub/quackduck.github.io/ChatClient.jar"/>
 		<list key="FatJarPackageWizardPage.DESTINATION_NAMES_ID">
+			<item value="/Users/ishan/Desktop/GitHub/quackduck.github.io/ChatClient.jar"/>
 			<item value="/Users/ishan/Desktop/GitHub/quackduck.github.io/SimpleChatClient.jar"/>
 			<item value="/Users/ishan/Desktop/SimpleChatClient.jar"/>
 			<item value="/Users/ishan/Desktop/ChatClient.jar"/>
@@ -90,8 +91,9 @@
 		<item key="JarManifestWizardPage.SAVE_MANIFEST" value="false"/>
 		<item key="JarManifestWizardPage.REUSE_MANIFEST" value="false"/>
 		<item key="JarManifestWizardPage.MANIFEST_LOCATION" value=""/>
-		<item key="JarManifestWizardPage.SEAL_JAR" value="false"/>
+		<item key="JarManifestWizardPage.SEAL_JAR" value="true"/>
 		<list key="JarPackageWizardPage.DESTINATION_NAMES_ID">
+			<item value="/Users/ishan/Desktop/Github/quackduck.github.io/ChatClient.jar"/>
 			<item value="/Users/ishan/Desktop/stuff.jar"/>
 		</list>
 	</section>
