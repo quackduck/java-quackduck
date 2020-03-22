@@ -2,7 +2,17 @@ import java.util.Scanner;
 
 
 public class ReverseString {
-
+	
+	
+	
+	
+	// TODO what is the differences between a hashtable and hashmap, vector and array
+	
+	
+	
+	
+	
+	
 	private static String strNewString;
 	
 	public static void main(String[] args) {
@@ -25,6 +35,15 @@ public class ReverseString {
 			strResult += x.charAt(i);
 		}
 		return strResult;
+	}
+	
+	public static String recursive (String x) {
+		if (x.length() == 1 || x.length() == 0) {
+			return x;
+		}
+		char theChar = x.charAt(x.length() - 1);
+		String newx = x.substring(0, x.length() - 1);	
+		return theChar + recursive(newx);
 	}
 }
 
