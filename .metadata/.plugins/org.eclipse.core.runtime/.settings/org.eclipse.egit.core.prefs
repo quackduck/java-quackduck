@@ -1,4 +1,5 @@
 GitRepositoriesView.GitDirectories=/Users/ishan/Desktop/eclipse/.git\:
 GitRepositoriesView.GitDirectories.relative=.git\:
 core_defaultRepositoryDir=/Users/ishan/Desktop/GitHub
+core_preferredMergeStrategy=jgit-default-mergeStrategy
 eclipse.preferences.version=1
