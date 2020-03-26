@@ -45,9 +45,6 @@ public class ChatServer {
 				sock = clientSocket;
 				InputStreamReader isReader = new InputStreamReader(sock.getInputStream());
 				reader = new BufferedReader(isReader);
-				name = reader.readLine();
-				names.add(name);			
-				clientOutputStreams.get((clientOutputStreams.size()) - 1).println(format());
 			} catch (Exception ex) {ex.printStackTrace();}
 		}
 
@@ -72,6 +69,13 @@ public class ChatServer {
 		}
 
 		public void run () {
+			try {
+				name = reader.readLine();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			names.add(name);
+			clientOutputStreams.get(clientOutputStreams.size() - 1).println(format());
 			String message;
 			boolean readmore = true;
 			try {
@@ -85,7 +89,7 @@ public class ChatServer {
 					}
 				}
 
-				if (sock.isClosed()) {
+				if (sock.isClosed() || readmore == false) {
 					names.remove(name);
 				}
 			} catch (Exception ex) {ex.printStackTrace();}
@@ -110,6 +114,12 @@ public class ChatServer {
 				Socket clientSocket = serverSock.accept();
 				PrintWriter writer = new PrintWriter(clientSocket.getOutputStream());
 				clientOutputStreams.add(writer);
+				for (String x : names) {
+					if (x == null) {break;}
+					writer.println(x);
+					System.out.println("<startpersonnamesent>" + x + "<endpersonnamesent>");
+				}
+				writer.println("end");
 				System.out.println("CONNECTION RECEIVED");
 				Thread t = new Thread(new ClientHandler(clientSocket));
 				t.start();

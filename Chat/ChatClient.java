@@ -6,11 +6,11 @@ import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.*;
-//import java.util.*;
+import java.util.*;
 
 
 public class ChatClient {
-	
+
 	public static String PrivateIPofServer = "chatserver.local"; // this is my IP (I'm hosting the server on my computer)
 	public static int PortOfServer = 5000; // Leave this alone
 	public static ReadWrite readwrite = new ReadWrite(System.getProperty("user.home") + "/Desktop/ChatRecord.txt");
@@ -22,31 +22,55 @@ public class ChatClient {
 	BufferedReader reader;
 	PrintWriter writer;
 	Socket sock;
+	JFrame frame;
 	public static void main(String[] args) {
+
 		new ChatClient().go();
+
 	}
 
 	public void go() {
+		setUpNetworking();
+		ArrayList<String> list = new ArrayList<String>();
+		String personName = "";
+		try { 
+			while ((personName = reader.readLine()) != null) {
+				if (personName.strip().equals("end") || personName.strip().equals("") || personName.strip().equals("null")) {
+					break;
+				} else {
+					list.add(personName);
+					System.out.print("<start>" + personName + "<end>");
+				}
+			}
 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		list.add("gahh");
+		list.add("chiti");
+		list.add("ishan");
+		Thread readerThread = new Thread (new IncomingReader());
+		readerThread.start();
 		if (readwrite.exists()) {
 			record += readwrite.read() + System.lineSeparator() + System.lineSeparator();
 		}
 		Scanner scannerIn = new Scanner(System.in);
+		System.out.println("here");
 		System.out.println("Enter your chat username");
 		while ((yourName = scannerIn.nextLine()).strip() == "") {
 			System.out.println("Seriously? Choose another name.");
 		}
-		System.out.println("Enter Server Address (or press enter to use default)");
-		PrivateIPofServer = scannerIn.nextLine();
-		if (PrivateIPofServer.equals("")) {
-			PrivateIPofServer = "chatserver.local";
+		while (list.contains(yourName)) {
+			System.out.println("That name's been taken. Choose another one");
+			yourName = scannerIn.nextLine();
 		}
 		System.out.println("If you want to save a record of your chat, press enter. Else type the letter N");
 		if (scannerIn.nextLine().equalsIgnoreCase("n")) {
 			toRecord = false;
 		}
 		scannerIn.close();
-		JFrame frame = new JFrame ("Chat");
+		frame = new JFrame ("Chat");
 		JPanel mainPanel = new JPanel();
 		incoming = new JTextArea (20,30);
 		DefaultCaret caret = (DefaultCaret) incoming.getCaret();
@@ -59,13 +83,19 @@ public class ChatClient {
 		outgoing.addKeyListener(new KeyPressListener());
 		mainPanel.add(qScroller);
 		mainPanel.add(outgoing);
-		setUpNetworking();
-		Thread readerThread = new Thread (new IncomingReader());
-		readerThread.start();
 		frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
-		frame.setSize(800, 500);
+		frame.setSize(425, 425);
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				close();
+			}
+		});
 		frame.setVisible(true);
 		outgoing.requestFocusInWindow();
+		writer.println(yourName);
+		writer.println(yourName + " has joined the chat");
+		writer.flush();
 	}
 
 	private void setUpNetworking() {
@@ -74,23 +104,19 @@ public class ChatClient {
 			InputStreamReader streamReader = new InputStreamReader(sock.getInputStream());
 			reader = new BufferedReader(streamReader);
 			writer = new PrintWriter(sock.getOutputStream());
-			writer.println(yourName);
-			writer.println(yourName + " has joined the chat");
-			writer.flush();
-			System.out.println("Connected!");
+			System.out.println("Connected to Server");
 		} catch(IOException ex) {ex.printStackTrace();}
 	}
 
 	public class KeyPressListener implements KeyListener {
 
-		public void keyTyped(KeyEvent e) {
+		@Override
+		public void keyTyped(KeyEvent e) {}
 
-		}
+		@Override
+		public void keyPressed(KeyEvent e) {}
 
-		public void keyPressed(KeyEvent e) {
-
-		}
-
+		@Override
 		public void keyReleased(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 				sendStuff();
@@ -127,13 +153,14 @@ public class ChatClient {
 	}
 
 	public void close() {
+		frame.setVisible(false);
 		writer.println(yourName + " has left the chat");
 		writer.flush();
 		writer.println("STOP LISTENING");
 		writer.flush();
 		if (toRecord) {
-		 readwrite.setContent(record);
-		 readwrite.create();
+			readwrite.setContent(record);
+			readwrite.create();
 		}
 		writer.close();
 		try {
@@ -146,6 +173,7 @@ public class ChatClient {
 	}
 
 	public class IncomingReader implements Runnable {
+		@Override
 		public void run () {
 			String message;
 			try {
@@ -154,7 +182,7 @@ public class ChatClient {
 					record += message + System.lineSeparator();
 					incoming.append(message + System.lineSeparator());
 				}
-			} catch (Exception ex) {ex.printStackTrace();}
+			} catch (Exception e) {e.printStackTrace();}
 		}
 	}
 }
