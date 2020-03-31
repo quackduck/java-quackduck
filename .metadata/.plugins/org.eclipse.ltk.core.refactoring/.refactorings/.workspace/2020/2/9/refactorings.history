@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename Java project &apos;ReadWrite&apos; to &apos;Base&apos;&#x0A;- Original element: &apos;ReadWrite&apos;&#x0A;- Renamed element: &apos;ReadWrite&apos;&#x0A;- Update references to refactored element" description="Rename Java project &apos;ReadWrite&apos;" flags="7" id="org.eclipse.jdt.ui.rename.java.project" input="=ReadWrite" name="Base" references="true" stamp="1582638167143" version="1.0"/>
-</session>

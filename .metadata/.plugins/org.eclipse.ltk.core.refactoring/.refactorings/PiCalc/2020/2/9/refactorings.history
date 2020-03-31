@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename type &apos;base.Funcs&apos; to &apos;Func&apos;&#x0A;- Original project: &apos;PiCalc&apos;&#x0A;- Original element: &apos;base.Funcs&apos;&#x0A;- Renamed element: &apos;base.Func&apos;&#x0A;- Update references to refactored element&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;Funcs&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/&lt;base{Funcs.java[Funcs" matchStrategy="1" name="Func" qualified="false" references="true" similarDeclarations="false" stamp="1582639275899" textual="false" version="1.0"/>
-</session>
