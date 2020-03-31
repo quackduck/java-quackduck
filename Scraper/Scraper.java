@@ -17,9 +17,9 @@ public class Scraper {
 
 	public static void main(String[] args) {
 		Scraper scraper = new Scraper();
-		scraper.setAddress("www.google.com/imghp");
+		scraper.setAddress("icanhazip.com");
 		scraper.doRequest();
-		System.out.println(scraper.everything() + scraper.data());
+		System.out.println(scraper.data());
 	}
 
 	public void doRequest() {
