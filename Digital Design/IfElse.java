@@ -3,9 +3,44 @@ public class IfElse {
 
 	public static void main(String[] args) {
 
-		new IfElse().DiscountStuff();
+		new IfElse().ageName();
+	}
+	
+	public void ageName() {
+		Scanner scan = new Scanner(System.in);
+		String name = scan.nextLine();
+		int age = scan.nextInt();
+		scan.close();
+		for (int i = 1; i <= age; i++) {
+			System.out.println(name);
+		}
+	}
+	
+	public void factorial(long x) {
+		for (long i = (x-1) ; i > 0; i--) {
+			x *= i;
+		}
+		System.out.println(x);
 	}
 
+	public void hellohello() {
+		for (int i = 1; i <= 50 ; i++) {
+			System.out.print("hello");
+		}
+	}
+		
+	public void OddNums() {
+		for (int i = 1; i < 40 ; i+=2) {
+			System.out.println(i);
+		}
+	}
+	
+	public void EvenNums() {
+		for (int i = 2; i <= 20 ; i+=2) {
+			System.out.println(i);
+		}
+	}
+	
 	public void NegativePositive() {
 		Scanner scan = new Scanner(System.in);
 		System.out.print("Enter a number: ");
