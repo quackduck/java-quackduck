@@ -3,9 +3,31 @@ public class IfElse {
 
 	public static void main(String[] args) {
 
-		new IfElse().ageName();
+		new IfElse().monthStuff();
 	}
-	
+
+	public void monthStuff() { 
+
+		Scanner scan = new Scanner(System.in); 
+
+		while (true) { 
+
+			int monthnum = scan.nextInt(); 
+
+			if (monthnum>12 || monthnum<1) { 
+
+				System.out.println("Enter another Number"); 
+
+			} else { 
+
+				break; 
+
+			} 
+
+		} 
+
+	} 
+
 	public void ageName() {
 		Scanner scan = new Scanner(System.in);
 		String name = scan.nextLine();
@@ -15,7 +37,7 @@ public class IfElse {
 			System.out.println(name);
 		}
 	}
-	
+
 	public void factorial(long x) {
 		for (long i = (x-1) ; i > 0; i--) {
 			x *= i;
@@ -28,19 +50,19 @@ public class IfElse {
 			System.out.print("hello");
 		}
 	}
-		
+
 	public void OddNums() {
 		for (int i = 1; i < 40 ; i+=2) {
 			System.out.println(i);
 		}
 	}
-	
+
 	public void EvenNums() {
 		for (int i = 2; i <= 20 ; i+=2) {
 			System.out.println(i);
 		}
 	}
-	
+
 	public void NegativePositive() {
 		Scanner scan = new Scanner(System.in);
 		System.out.print("Enter a number: ");
