@@ -38,8 +38,7 @@ public class ChatClient {
 				if (personName.strip().equals("end") || personName.strip().equals("") || personName.strip().equals("null")) {
 					break;
 				} else {
-					list.add(personName);
-					System.out.print("<start>" + personName + "<end>");
+					list.add(personName.toLowerCase());
 				}
 			}
 
@@ -47,21 +46,17 @@ public class ChatClient {
 			e.printStackTrace();
 		}
 		
-		list.add("gahh");
-		list.add("chiti");
-		list.add("ishan");
 		Thread readerThread = new Thread (new IncomingReader());
 		readerThread.start();
 		if (readwrite.exists()) {
 			record += readwrite.read() + System.lineSeparator() + System.lineSeparator();
 		}
 		Scanner scannerIn = new Scanner(System.in);
-		System.out.println("here");
 		System.out.println("Enter your chat username");
 		while ((yourName = scannerIn.nextLine()).strip() == "") {
 			System.out.println("Seriously? Choose another name.");
 		}
-		while (list.contains(yourName)) {
+		while (list.contains(yourName.toLowerCase())) {
 			System.out.println("That name's been taken. Choose another one");
 			yourName = scannerIn.nextLine();
 		}

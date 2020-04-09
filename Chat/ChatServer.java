@@ -114,12 +114,14 @@ public class ChatServer {
 				Socket clientSocket = serverSock.accept();
 				PrintWriter writer = new PrintWriter(clientSocket.getOutputStream());
 				clientOutputStreams.add(writer);
-				for (String x : names) {
-					if (x == null) {break;}
-					writer.println(x);
-					System.out.println("<startpersonnamesent>" + x + "<endpersonnamesent>");
+				if (names.size() > 0) {
+					for (String x : names) {
+						if (x == null) {break;}
+						writer.println(x);
+					}
 				}
 				writer.println("end");
+				writer.flush();
 				System.out.println("CONNECTION RECEIVED");
 				Thread t = new Thread(new ClientHandler(clientSocket));
 				t.start();
