@@ -105,7 +105,7 @@ public class ChatServer {
 			} catch (IOException ex) {
 				System.out.println("The port is occupied");
 				System.out.println("The server has closed");
-				System.exit(0);
+				System.exit(1);
 			} 
 			Thread close = new Thread (new toCloseOrNotToClose(serverSock));
 			close.start();
@@ -116,7 +116,6 @@ public class ChatServer {
 				clientOutputStreams.add(writer);
 				if (names.size() > 0) {
 					for (String x : names) {
-						if (x == null) {break;}
 						writer.println(x);
 					}
 				}

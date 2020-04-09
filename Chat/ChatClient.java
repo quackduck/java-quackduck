@@ -11,12 +11,13 @@ import java.util.*;
 
 public class ChatClient {
 
-	public static String PrivateIPofServer = "chatserver.local"; // this is my IP (I'm hosting the server on my computer)
-	public static int PortOfServer = 5000; // Leave this alone
-	public static ReadWrite readwrite = new ReadWrite(System.getProperty("user.home") + "/Desktop/ChatRecord.txt");
-	public static String yourName;
-	public static String record = "";
-	public static boolean toRecord = true;
+	public String PrivateIPofServer = "chatserver.local"; // this is my IP (I'm hosting the server on my computer)
+	public int PortOfServer = 5000; // Leave this alone
+	public ReadWrite readwrite = new ReadWrite(System.getProperty("user.home") + "/Desktop/ChatRecord.txt");
+	public String yourName;
+	public String record = "";
+	public boolean toRecord = true;
+	public boolean prefs = false;
 	JTextArea incoming;
 	JTextField outgoing;
 	BufferedReader reader;
@@ -60,14 +61,23 @@ public class ChatClient {
 			System.out.println("That name's been taken. Choose another one");
 			yourName = scannerIn.nextLine();
 		}
-		System.out.println("If you want to save a record of your chat, press enter. Else type the letter N");
+		System.out.println("If you want to save a record of your chat, press enter. Else type the letter N (Uppercase or lowercase)");
 		if (scannerIn.nextLine().equalsIgnoreCase("n")) {
 			toRecord = false;
 		}
+		System.out.println("Save prefs? Type yes. If not just hit enter");
+		if (scannerIn.nextLine().equalsIgnoreCase("yes")) {
+			readwrite.setPath(System.getProperty("user.home") + "/Desktop/.ChatPrefs.txt");
+			readwrite.setContent("$$" + yourName + "$$" + toRecord);
+			readwrite.create();
+			readwrite.setPath(System.getProperty("user.home") + "/Desktop/ChatRecord.txt");
+		}
+		
+		// TODO parsing of hidden preference file. And other pref related stuff
 		scannerIn.close();
-		frame = new JFrame ("Chat");
+		frame = new JFrame("Chat");
 		JPanel mainPanel = new JPanel();
-		incoming = new JTextArea (20,30);
+		incoming = new JTextArea(20,30);
 		DefaultCaret caret = (DefaultCaret) incoming.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		incoming.setLineWrap(true);
@@ -100,7 +110,7 @@ public class ChatClient {
 			reader = new BufferedReader(streamReader);
 			writer = new PrintWriter(sock.getOutputStream());
 			System.out.println("Connected to Server");
-		} catch(IOException ex) {ex.printStackTrace();}
+		} catch(IOException ex) {System.out.println("The server isn't online. Bye!"); System.exit(1);}
 	}
 
 	public class KeyPressListener implements KeyListener {
