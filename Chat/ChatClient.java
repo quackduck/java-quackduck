@@ -61,16 +61,19 @@ public class ChatClient {
 			System.out.println("That name's been taken. Choose another one");
 			yourName = scannerIn.nextLine();
 		}
-		System.out.println("If you want to save a record of your chat, press enter. Else type the letter N (Uppercase or lowercase)");
+		System.out.println("If you want to save a record of your chat, press enter. Else type the letter n");
 		if (scannerIn.nextLine().equalsIgnoreCase("n")) {
 			toRecord = false;
 		}
 		System.out.println("Save prefs? Type yes. If not just hit enter");
 		if (scannerIn.nextLine().equalsIgnoreCase("yes")) {
+			String contentBuffer = readwrite.getContent();
+			String pathBuffer = readwrite.getPath();
 			readwrite.setPath(System.getProperty("user.home") + "/Desktop/.ChatPrefs.txt");
-			readwrite.setContent("$$" + yourName + "$$" + toRecord);
+			readwrite.setContent(System.lineSeparator() + yourName + System.lineSeparator() + toRecord);
 			readwrite.create();
-			readwrite.setPath(System.getProperty("user.home") + "/Desktop/ChatRecord.txt");
+			readwrite.setPath(pathBuffer);
+			readwrite.setContent(contentBuffer);
 		}
 		
 		// TODO parsing of hidden preference file. And other pref related stuff
@@ -101,6 +104,32 @@ public class ChatClient {
 		writer.println(yourName);
 		writer.println(yourName + " has joined the chat");
 		writer.flush();
+	}
+	
+	private void defaultSetup () {
+		Scanner scannerIn = new Scanner(System.in);
+		System.out.println("Enter your chat username");
+		while ((yourName = scannerIn.nextLine()).strip() == "") {
+			System.out.println("Seriously? Choose another name.");
+		}
+		while (list.contains(yourName.toLowerCase())) {
+			System.out.println("That name's been taken. Choose another one");
+			yourName = scannerIn.nextLine();
+		}
+		System.out.println("If you want to save a record of your chat, press enter. Else type the letter n");
+		if (scannerIn.nextLine().equalsIgnoreCase("n")) {
+			toRecord = false;
+		}
+		System.out.println("Save prefs? Type yes. If not just hit enter");
+		if (scannerIn.nextLine().equalsIgnoreCase("yes")) {
+			String contentBuffer = readwrite.getContent();
+			String pathBuffer = readwrite.getPath();
+			readwrite.setPath(System.getProperty("user.home") + "/Desktop/.ChatPrefs.txt");
+			readwrite.setContent(System.lineSeparator() + yourName + System.lineSeparator() + toRecord);
+			readwrite.create();
+			readwrite.setPath(pathBuffer);
+			readwrite.setContent(contentBuffer);
+		}
 	}
 
 	private void setUpNetworking() {
