@@ -1,6 +1,5 @@
 
 public class FindDuplicateInt {
-	//
 	public static int[] thing0 = {0, 1, 2, 3, 4, 10, 5, 6, 7, 8, 9, 10};
 	public static int[] thing1 = {0, 1, 2, 2, 3};
 	public static int[] thing2 = {0, 1, 1, 2, 3};
