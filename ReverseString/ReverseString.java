@@ -6,11 +6,6 @@ public class ReverseString {
 	
 	
 	
-	// TODO what is the differences between a hashtable and hashmap, vector and array
-	
-	
-	
-	
 	
 	
 	private static String strNewString;
