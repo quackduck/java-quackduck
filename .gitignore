@@ -21,5 +21,4 @@ local.properties
 
 # Locally stored "Eclipse launch configurations"
 *.launch
-Halloween Tower Defense
-.idea/
+.idea
