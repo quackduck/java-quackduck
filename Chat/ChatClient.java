@@ -11,8 +11,8 @@ import java.util.*;
 
 public class ChatClient {
 
-	public String PrivateIPofServer = "chatserver.local"; // this is my IP (I'm hosting the server on my computer)
-	public int PortOfServer = 5000; // Leave this alone
+	public String PrivateIPofServer = "chatserver.local"; 
+	public int PortOfServer = 5000;
 	public ReadWrite readwrite = new ReadWrite(System.getProperty("user.home") + "/Desktop/ChatRecord.txt");
 	public String yourName;
 	public String record = "";
