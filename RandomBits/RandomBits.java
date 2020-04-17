@@ -3,7 +3,7 @@ import java.util.Random;
 
 public class RandomBits {
 	
-	static int numOfChars = 800000000;
+	static int numOfChars = 80;
 
 	public static void main(String[] args) {
 		Random bitmaker = new Random();

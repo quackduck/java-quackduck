@@ -17,7 +17,8 @@ public class ChatClient {
 	public String yourName;
 	public String record = "";
 	public boolean toRecord = true;
-	public boolean prefs = false;
+	public ArrayList<String> list = new ArrayList<String>();
+	public Scanner scannerIn = new Scanner(System.in);
 	JTextArea incoming;
 	JTextField outgoing;
 	BufferedReader reader;
@@ -32,7 +33,7 @@ public class ChatClient {
 
 	public void go() {
 		setUpNetworking();
-		ArrayList<String> list = new ArrayList<String>();
+
 		String personName = "";
 		try { 
 			while ((personName = reader.readLine()) != null) {
@@ -46,38 +47,34 @@ public class ChatClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		Thread readerThread = new Thread (new IncomingReader());
 		readerThread.start();
 		if (readwrite.exists()) {
-			record += readwrite.read() + System.lineSeparator() + System.lineSeparator();
+			java.util.Date date = new java.util.Date();  
+			record += readwrite.read() + System.lineSeparator() + System.lineSeparator() + date.toString() + System.lineSeparator();
 		}
-		Scanner scannerIn = new Scanner(System.in);
-		System.out.println("Enter your chat username");
-		while ((yourName = scannerIn.nextLine()).strip() == "") {
-			System.out.println("Seriously? Choose another name.");
-		}
-		while (list.contains(yourName.toLowerCase())) {
-			System.out.println("That name's been taken. Choose another one");
-			yourName = scannerIn.nextLine();
-		}
-		System.out.println("If you want to save a record of your chat, press enter. Else type the letter n");
-		if (scannerIn.nextLine().equalsIgnoreCase("n")) {
-			toRecord = false;
-		}
-		System.out.println("Save prefs? Type yes. If not just hit enter");
-		if (scannerIn.nextLine().equalsIgnoreCase("yes")) {
-			String contentBuffer = readwrite.getContent();
-			String pathBuffer = readwrite.getPath();
-			readwrite.setPath(System.getProperty("user.home") + "/Desktop/.ChatPrefs.txt");
-			readwrite.setContent(System.lineSeparator() + yourName + System.lineSeparator() + toRecord);
-			readwrite.create();
+
+		String contentBuffer = readwrite.getContent();
+		String pathBuffer = readwrite.getPath();
+		readwrite.setPath(System.getProperty("user.home") + "/Desktop/.ChatPrefs.txt");
+		if (readwrite.exists()) {
+			System.out.println("Use Prefs? Hit enter. If not, type anything else");
+			if (scannerIn.nextLine().equals("")) {
+				String[] stringArr = readwrite.read().split(System.lineSeparator());
+				yourName = stringArr[0];
+				toRecord = Boolean.parseBoolean(stringArr[1]);
+			} else {
+				defaultSetup();
+			}
 			readwrite.setPath(pathBuffer);
 			readwrite.setContent(contentBuffer);
+
+		} else {
+			readwrite.setPath(pathBuffer);
+			readwrite.setContent(contentBuffer);
+			defaultSetup();
 		}
-		
-		// TODO parsing of hidden preference file. And other pref related stuff
-		scannerIn.close();
 		frame = new JFrame("Chat");
 		JPanel mainPanel = new JPanel();
 		incoming = new JTextArea(20,30);
@@ -105,9 +102,8 @@ public class ChatClient {
 		writer.println(yourName + " has joined the chat");
 		writer.flush();
 	}
-	
+
 	private void defaultSetup () {
-		Scanner scannerIn = new Scanner(System.in);
 		System.out.println("Enter your chat username");
 		while ((yourName = scannerIn.nextLine()).strip() == "") {
 			System.out.println("Seriously? Choose another name.");
@@ -125,7 +121,7 @@ public class ChatClient {
 			String contentBuffer = readwrite.getContent();
 			String pathBuffer = readwrite.getPath();
 			readwrite.setPath(System.getProperty("user.home") + "/Desktop/.ChatPrefs.txt");
-			readwrite.setContent(System.lineSeparator() + yourName + System.lineSeparator() + toRecord);
+			readwrite.setContent(yourName + System.lineSeparator() + toRecord);
 			readwrite.create();
 			readwrite.setPath(pathBuffer);
 			readwrite.setContent(contentBuffer);
@@ -187,12 +183,14 @@ public class ChatClient {
 	}
 
 	public void close() {
+		scannerIn.close();
 		frame.setVisible(false);
 		writer.println(yourName + " has left the chat");
 		writer.flush();
 		writer.println("STOP LISTENING");
 		writer.flush();
 		if (toRecord) {
+			readwrite.setPath(System.getProperty("user.home") + "/Desktop/ChatRecord.txt");
 			readwrite.setContent(record);
 			readwrite.create();
 		}
@@ -215,6 +213,8 @@ public class ChatClient {
 					System.out.println(message);
 					record += message + System.lineSeparator();
 					incoming.append(message + System.lineSeparator());
+					readwrite.setContent(record);
+					readwrite.create();
 				}
 			} catch (Exception e) {e.printStackTrace();}
 		}
