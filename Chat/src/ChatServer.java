@@ -89,8 +89,10 @@ public class ChatServer {
 					}
 				}
 
-				if (sock.isClosed() || readmore == false) {
-					names.remove(name);
+				if (sock.isClosed() || !readmore) {
+					if (names.contains(name)) {
+						names.remove(name);
+					}
 				}
 			} catch (Exception ex) {ex.printStackTrace();}
 		}
@@ -114,6 +116,7 @@ public class ChatServer {
 				Socket clientSocket = serverSock.accept();
 				PrintWriter writer = new PrintWriter(clientSocket.getOutputStream());
 				clientOutputStreams.add(writer);
+				cleanList();
 				if (names.size() > 0) {
 					for (String x : names) {
 						writer.println(x);
@@ -140,7 +143,11 @@ public class ChatServer {
 			} catch(Exception ex) {ex.printStackTrace();}
 		}
 	}
-
+	public void cleanList() {
+		while (names.contains(null)) {
+			names.remove(null);
+		}
+	}
 	public static void main (String[] args) {
 		new ChatServer().go();
 	}

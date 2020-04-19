@@ -43,7 +43,6 @@ public class ChatClient {
 					list.add(personName.toLowerCase());
 				}
 			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
