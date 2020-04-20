@@ -37,7 +37,7 @@ public class ChatClient {
 		String personName = "";
 		try { 
 			while ((personName = reader.readLine()) != null) {
-				if (personName.strip().equals("end") || personName.strip().equals("") || personName.strip().equals("null")) {
+				if (personName.strip().equals("end")) {
 					break;
 				} else {
 					list.add(personName.toLowerCase());
