@@ -18,9 +18,7 @@ public class ChatServer {
 		}
 		public void run () {
 			while (true) {
-				if (in.nextLine().equals("CLOSE SERVER")) {
-					System.out.println("Enter password");
-					if (in.nextLine().equals("password123")) {
+				if (in.nextLine().equals("exit")) {
 						try {
 							sock.close();
 						} catch (IOException e) {
@@ -28,24 +26,26 @@ public class ChatServer {
 						}
 						System.exit(0);
 					} else {
-						System.out.println("PERMISSION DENIED. Retry");
+						System.out.println("Type \"exit\" to exit");
 					}
 				}
 			}
 		}
-	}
 
 	public class ClientHandler implements Runnable {
 		public BufferedReader reader;
 		public Socket sock;
 		public String name;
 		public int index;
+
 		public ClientHandler(Socket clientSocket) {
 			try {
 				sock = clientSocket;
 				InputStreamReader isReader = new InputStreamReader(sock.getInputStream());
 				reader = new BufferedReader(isReader);
-			} catch (Exception ex) {ex.printStackTrace();}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 
 		public String format() {
@@ -55,9 +55,9 @@ public class ChatServer {
 
 			String formatted = "";
 			for (int i = 0; i < names.size(); i++) {
-				if (i == ( names.size() - 1) ) {
+				if (i == (names.size() - 1)) {
 					formatted += "you ";
-				} else if (i == ( names.size() - 2) ) {
+				} else if (i == (names.size() - 2)) {
 					formatted += names.get(i) + " and ";
 				} else {
 					formatted += names.get(i) + ", ";
@@ -68,7 +68,7 @@ public class ChatServer {
 			return formatted + "are chatting";
 		}
 
-		public void run () {
+		public void run() {
 			try {
 				name = reader.readLine();
 			} catch (IOException e) {
@@ -79,7 +79,7 @@ public class ChatServer {
 			String message;
 			boolean readmore = true;
 			try {
-				while (readmore && !sock.isClosed() &&(message = reader.readLine()) != null) {
+				while (readmore && !sock.isClosed() && (message = reader.readLine()) != null) {
 					if (message.equals("STOP LISTENING")) {
 						reader.close();
 						readmore = false;
@@ -94,16 +94,21 @@ public class ChatServer {
 						names.remove(name);
 					}
 				}
-			} catch (Exception ex) {ex.printStackTrace();}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
+
 
 	public void go () {
 		clientOutputStreams = new ArrayList<PrintWriter>();
 		ServerSocket serverSock = null;
 		try {
 			try {
-				serverSock = new ServerSocket(PortOfServer);
+				serverSock = new ServerSocket(0);
+				System.out.println("The Server ID is " + serverSock.getLocalPort());
+				System.out.println("Share this ID with your students so they can chat with you. Keep this server running so they can connect. If you stop this, the ID may be different next time.");
 			} catch (IOException ex) {
 				System.out.println("The port is occupied");
 				System.out.println("The server has closed");
@@ -111,7 +116,7 @@ public class ChatServer {
 			} 
 			Thread close = new Thread (new toCloseOrNotToClose(serverSock));
 			close.start();
-			System.out.println("Server running. Use command CLOSE SERVER to close the server");
+			System.out.println("Server running. Use \"exit\" to close the server");
 			while(true) {
 				Socket clientSocket = serverSock.accept();
 				PrintWriter writer = new PrintWriter(clientSocket.getOutputStream());

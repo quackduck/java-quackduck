@@ -32,8 +32,14 @@ public class ChatClient {
 	}
 
 	public void go() {
+		System.out.println("Enter Server ID");
+		try {
+			PortOfServer = Integer.parseInt(scannerIn.nextLine());
+		} catch (Exception e) {
+			System.out.println("Invalid ID");
+			System.exit(0);
+		}
 		setUpNetworking();
-
 		String personName = "";
 		try { 
 			while ((personName = reader.readLine()) != null) {
@@ -61,8 +67,12 @@ public class ChatClient {
 			System.out.println("Use Prefs? Hit enter. If not, type anything else");
 			if (scannerIn.nextLine().equals("")) {
 				String[] stringArr = readwrite.read().split(System.lineSeparator());
-				yourName = stringArr[0];
 				toRecord = Boolean.parseBoolean(stringArr[1]);
+				yourName = stringArr[0];
+				if(list.contains(yourName.toLowerCase())) {
+					System.out.println("Sorry, the username in your prefs has been taken");
+					defaultSetup();
+				}
 			} else {
 				defaultSetup();
 			}
@@ -104,11 +114,11 @@ public class ChatClient {
 
 	private void defaultSetup () {
 		System.out.println("Enter your chat username");
-		while ((yourName = scannerIn.nextLine()).strip() == "") {
+		while ((yourName = scannerIn.nextLine()).strip().equals("")) {
 			System.out.println("Seriously? Choose another name.");
 		}
-		while (list.contains(yourName.toLowerCase())) {
-			System.out.println("That name's been taken. Choose another one");
+		while (list.contains(yourName.toLowerCase()) || yourName.strip().equals("")) {
+			System.out.println("That name's taken or is invalid. Choose another one");
 			yourName = scannerIn.nextLine();
 		}
 		System.out.println("If you want to save a record of your chat, press enter. Else type the letter n");
@@ -134,7 +144,7 @@ public class ChatClient {
 			reader = new BufferedReader(streamReader);
 			writer = new PrintWriter(sock.getOutputStream());
 			System.out.println("Connected to Server");
-		} catch(IOException ex) {System.out.println("The server isn't online. Bye!"); System.exit(1);}
+		} catch(IOException ex) {System.out.println("The server isn't online or the ID is incorrect. Bye!"); System.exit(1);}
 	}
 
 	public class KeyPressListener implements KeyListener {
