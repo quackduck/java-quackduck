@@ -1,36 +1,18 @@
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
 
 
-public class ChatServer {
+public class Teacher {
 
 	ArrayList<PrintWriter> clientOutputStreams;
+	int ServerID = 0;
 
-	public int PortOfServer = 5000;
 	public ArrayList<String> names = new ArrayList<String>();
-
-	public class toCloseOrNotToClose implements Runnable {
-		Scanner in = new Scanner(System.in);
-		public ServerSocket sock;
-		public toCloseOrNotToClose (ServerSocket socket) {
-			sock = socket;
-		}
-		public void run () {
-			while (true) {
-				if (in.nextLine().equals("exit")) {
-						try {
-							sock.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						System.exit(0);
-					} else {
-						System.out.println("Type \"exit\" to exit");
-					}
-				}
-			}
-		}
 
 	public class ClientHandler implements Runnable {
 		public BufferedReader reader;
@@ -86,15 +68,12 @@ public class ChatServer {
 					if (message.equals("STOP LISTENING")) {
 						reader.close();
 					} else {
-						System.out.println(message);
 						tellEveryone(message);
 					}
 				}
 
-				if (sock.isClosed()) {
-					System.out.println(names + " before removing");
+				if (!sock.isClosed()) {
 					names.remove(name);
-					System.out.println(names + " after removing");
 				}
 			} catch (Exception ex) {
 				if(!sock.isClosed()) {
@@ -104,21 +83,27 @@ public class ChatServer {
 		}
 	}
 
+	public class StudentHandler implements Runnable {
+		@Override
+		public void run() {
+			new Student(ServerID).go();
+		}
+	}
 
 	public void go () {
 		clientOutputStreams = new ArrayList<PrintWriter>();
 		ServerSocket serverSock = null;
 		try {
 			try {
-				serverSock = new ServerSocket(PortOfServer);
+				serverSock = new ServerSocket(0);
+				System.out.println("The Server ID is " + (ServerID = serverSock.getLocalPort()));
+				System.out.println("Share this ID with your students so they can chat with you. Keep this server running so they can connect. If you stop this, the ID may be different next time.");
 			} catch (IOException ex) {
-				System.out.println("The port is occupied");
-				System.out.println("The server has closed");
+				System.out.println("There is no free space for the server on this network :( ");
 				System.exit(1);
-			} 
-			Thread close = new Thread (new toCloseOrNotToClose(serverSock));
-			close.start();
-			System.out.println("Server running. Use \"exit\" to close the server");
+			}
+			System.out.println("Server running");
+			new Thread(new StudentHandler()).start();
 			while(true) {
 				Socket clientSocket = serverSock.accept();
 				PrintWriter writer = new PrintWriter(clientSocket.getOutputStream());
@@ -129,7 +114,6 @@ public class ChatServer {
 				}
 				writer.println("end");
 				writer.flush();
-				System.out.println("CONNECTION RECEIVED");
 				Thread t = new Thread(new ClientHandler(clientSocket, writer));
 				t.start();
 			}
@@ -141,9 +125,8 @@ public class ChatServer {
 	public void tellEveryone (String message) {
 		for (PrintWriter clientOutputStream : clientOutputStreams) {
 			try {
-				PrintWriter writer = clientOutputStream;
-				writer.println(message);
-				writer.flush();
+				clientOutputStream.println(message);
+				clientOutputStream.flush();
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -155,6 +138,6 @@ public class ChatServer {
 		}
 	}
 	public static void main (String[] args) {
-		new ChatServer().go();
+		new Teacher().go();
 	}
 }

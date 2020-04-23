@@ -1,24 +1,33 @@
-import java.io.*;
 import base.ReadWrite;
-import java.net.*;
-import java.util.Scanner;
+
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Scanner;
 
 
-public class ChatClient {
+public class Student {
 
-	public String PrivateIPofServer = "chatserver.local"; 
-	public int PortOfServer = 5000;
+	public String PrivateIPofServer = "chatserver.local";
+	public int ServerID = 0;
 	public ReadWrite readwrite = new ReadWrite(System.getProperty("user.home") + "/Desktop/ChatRecord.txt");
 	public String yourName;
 	public String record = "";
 	public boolean toRecord = true;
 	public ArrayList<String> list = new ArrayList<String>();
 	public Scanner scannerIn = new Scanner(System.in);
+	public boolean staySilentNoOutput = false;
 	JTextArea incoming;
 	JTextField outgoing;
 	BufferedReader reader;
@@ -26,27 +35,38 @@ public class ChatClient {
 	Socket sock;
 	JFrame frame;
 	public static void main(String[] args) {
-
-		new ChatClient().go();
-
+		new Student().go();
 	}
 
+	public Student(int theServerID) {
+		ServerID = theServerID;
+		staySilentNoOutput = true;
+	}
+
+	public Student() {}
+
 	public void go() {
+		if (ServerID == 0) { // we check whether ServerID has already been set using the constructor - Student(int)
+			System.out.println("Enter Server ID");
+			try {
+				ServerID = Integer.parseInt(scannerIn.nextLine());
+			} catch (Exception e) {
+				System.out.println("Invalid ID");
+				System.exit(0);
+			}
+		}
 		setUpNetworking();
 		String personName = "";
-		try { 
-			while ((personName = reader.readLine()) != null) {
-				if (personName.strip().equals("end")) {
-					break;
-				} else {
-					list.add(personName.toLowerCase());
-				}
+		try {
+			while ((personName = reader.readLine()) != null && !personName.strip().equals("end")) { // we get the lust of names which are already connected to the server.
+				list.add(personName.toLowerCase());
 			}
+
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Error in Student.go() while trying to get list of names from server. This is just a minor issue. The program will continue to work");
 		}
 		if (readwrite.exists()) {
-			java.util.Date date = new java.util.Date();  
+			Date date = new Date();
 			record += readwrite.read() + System.lineSeparator() + System.lineSeparator() + date.toString() + System.lineSeparator();
 		}
 
@@ -74,7 +94,7 @@ public class ChatClient {
 			readwrite.setContent(contentBuffer);
 			defaultSetup();
 		}
-		frame = new JFrame("Chat");
+		frame = new JFrame("Chat - " + yourName);
 		JPanel mainPanel = new JPanel();
 		incoming = new JTextArea(20,30);
 		DefaultCaret caret = (DefaultCaret) incoming.getCaret();
@@ -131,19 +151,20 @@ public class ChatClient {
 
 	private void setUpNetworking() {
 		try {
-			sock = new Socket(PrivateIPofServer, PortOfServer);
+			sock = new Socket(PrivateIPofServer, ServerID);
 			InputStreamReader streamReader = new InputStreamReader(sock.getInputStream());
 			reader = new BufferedReader(streamReader);
 			writer = new PrintWriter(sock.getOutputStream());
-			System.out.println("Connected to Server");
+			if (!staySilentNoOutput) {
+				System.out.println("Connected to Server");
+			}
+
 		} catch(IOException ex) {System.out.println("The server isn't online or the ID is incorrect. Bye!"); System.exit(1);}
 	}
 
 	public class KeyPressListener implements KeyListener {
-
 		@Override
 		public void keyTyped(KeyEvent e) {}
-
 		@Override
 		public void keyPressed(KeyEvent e) {}
 
@@ -159,24 +180,24 @@ public class ChatClient {
 		String text = outgoing.getText().strip();
 		try {
 			switch(text) {
-			case "clear":
-				incoming.setText("");
-				break;
-			case "bye":
-			case "au revoir":
-				writer.println(yourName + ":  " + text);
-				writer.flush();
-				close();
-				break;
-			case "close":
-			case "exit":
-				close();
-				break;
-			case "":
-				break;
-			default:
-				writer.println(yourName + ":  " + text);
-				writer.flush();
+				case "clear":
+					incoming.setText("");
+					break;
+				case "bye":
+				case "au revoir":
+					writer.println(yourName + ":  " + text);
+					writer.flush();
+					close();
+					break;
+				case "close":
+				case "exit":
+					close();
+					break;
+				case "":
+					break;
+				default:
+					writer.println(yourName + ":  " + text);
+					writer.flush();
 			}
 		} catch(Exception ex) {ex.printStackTrace();}
 		outgoing.setText("");
@@ -211,13 +232,13 @@ public class ChatClient {
 			String message;
 			try {
 				while (!sock.isClosed() && (message = reader.readLine()) != null) {
-					System.out.println(message);
+						System.out.println(message);
 					record += message + System.lineSeparator();
 					incoming.append(message + System.lineSeparator());
 					readwrite.setContent(record);
 					readwrite.create();
 				}
-			} catch (Exception e) {e.printStackTrace();}
+			} catch (Exception e) {if (!sock.isClosed()){e.printStackTrace();}}
 		}
 	}
 }
