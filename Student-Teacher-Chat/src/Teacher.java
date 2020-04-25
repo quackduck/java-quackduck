@@ -11,7 +11,6 @@ public class Teacher {
 
 	ArrayList<PrintWriter> clientOutputStreams;
 	int ServerID = 0;
-
 	public ArrayList<String> names = new ArrayList<String>();
 
 	public class ClientHandler implements Runnable {

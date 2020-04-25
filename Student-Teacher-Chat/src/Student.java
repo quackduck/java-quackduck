@@ -232,7 +232,7 @@ public class Student {
 			String message;
 			try {
 				while (!sock.isClosed() && (message = reader.readLine()) != null) {
-						System.out.println(message);
+					System.out.println(message);
 					record += message + System.lineSeparator();
 					incoming.append(message + System.lineSeparator());
 					readwrite.setContent(record);
