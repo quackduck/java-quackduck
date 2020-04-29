@@ -25,10 +25,6 @@ public class Student {
 	PrintWriter writer;
 	Socket sock;
 	JFrame frame;
-	public static void main(String[] args) {
-		new Student().go();
-	}
-
 	public Student(int theServerID, String theIPofServer) {
 		ServerID = theServerID;
 		IPofServer = theIPofServer;
@@ -36,6 +32,10 @@ public class Student {
 	}
 
 	public Student() {}
+
+	public static void main(String[] args) {
+		new Student().go();
+	}
 
 	public void go() {
 		if (IPofServer.equals("")){ // we check whether the ip of the server has already been set using the constructor - Student(int, String)
@@ -62,16 +62,8 @@ public class Student {
 		} catch (IOException e) {
 			System.out.println("Error while trying to get list of names from server. This is just a minor issue. The program will continue to work");
 		}
-		if (readwrite.exists()) {
-			Date date = new Date();
-			readwrite.setPath(System.getProperty("user.home") + "/Desktop/ChatRecord.txt");
-			String theStart = System.lineSeparator() + System.lineSeparator() + date.toString() + System.lineSeparator();
-			readwrite.setContent(theStart);
-			readwrite.append();
 
-		}
-
-		readwrite.setPath(System.getProperty("user.home") + "/Desktop/.ChatPrefs.txt");
+		readwrite.setPath(System.getProperty("user.home") + "/Desktop/ChatPrefs.txt");
 		if (readwrite.exists()) {
 			System.out.println("Use Prefs? Hit enter. If not, type anything else");
 			if (scannerIn.nextLine().equals("")) {
@@ -89,8 +81,15 @@ public class Student {
 		} else {
 			defaultSetup();
 		}
+		if (toRecord && readwrite.exists()) {
+			Date date = new Date();
+			readwrite.setPath(System.getProperty("user.home") + "/Desktop/ChatRecord.txt");
+			String theStart = System.lineSeparator() + System.lineSeparator() + date.toString() + System.lineSeparator();
+			readwrite.setContent(theStart);
+			readwrite.append();
+		}
 		try {
-			frame = new JFrame("Chat - " + reader.readLine());
+			frame = new JFrame(yourName + "'s Chat - " + reader.readLine());
 		} catch (IOException e) {
 			frame = new JFrame(yourName + "'s Chat");
 		}
@@ -133,19 +132,15 @@ public class Student {
 			System.out.println("That name's taken or is invalid. Choose another one");
 			yourName = scannerIn.nextLine();
 		}
-		System.out.println("If you want to save a record of your chat, press enter. Else type the letter n");
-		if (scannerIn.nextLine().equalsIgnoreCase("n")) {
+		System.out.println("If you want to save a record of your chat, press enter. Else type anything else");
+		if (!scannerIn.nextLine().equals("")) {
 			toRecord = false;
 		}
 		System.out.println("Save prefs? Type yes. If not just hit enter");
 		if (scannerIn.nextLine().equalsIgnoreCase("yes")) {
-			String contentBuffer = readwrite.getContent();
-			String pathBuffer = readwrite.getPath();
-			readwrite.setPath(System.getProperty("user.home") + "/Desktop/.ChatPrefs.txt");
-			readwrite.setContent(yourName + System.lineSeparator() + toRecord);
+			readwrite.setPath(System.getProperty("user.home") + "/Desktop/ChatPrefs.txt");
+			readwrite.setContent(yourName + System.lineSeparator() + toRecord + System.lineSeparator() + System.lineSeparator() + "Please do not edit the second line of this file to anything other than \"true\" or \"false\". Setting the second line to anything other than those values will mean that the next time you use prefs your chat will not be recorded in the file. You can edit the first line to whatever you wish your name to be.");
 			readwrite.create();
-			readwrite.setPath(pathBuffer);
-			readwrite.setContent(contentBuffer);
 		}
 	}
 
@@ -158,20 +153,6 @@ public class Student {
 				System.out.println("Connected to Server");
 			}
 		} catch(IOException ex) {System.out.println("The server isn't online or the Server info is incorrect(IP and ID). Bye!"); System.exit(1);}
-	}
-
-	public class KeyPressListener implements KeyListener {
-		@Override
-		public void keyTyped(KeyEvent e) {}
-		@Override
-		public void keyPressed(KeyEvent e) {}
-
-		@Override
-		public void keyReleased(KeyEvent e) {
-			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-				sendStuff();
-			}
-		}
 	}
 
 	public void sendStuff() {
@@ -216,6 +197,20 @@ public class Student {
 		System.exit(0);
 	}
 
+	public class KeyPressListener implements KeyListener {
+		@Override
+		public void keyTyped(KeyEvent e) {}
+		@Override
+		public void keyPressed(KeyEvent e) {}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				sendStuff();
+			}
+		}
+	}
+
 	public class IncomingReader implements Runnable {
 		@Override
 		public void run () {
@@ -230,7 +225,7 @@ public class Student {
 						readwrite.append();
 					}
 				}
-			} catch (Exception e) {if (!sock.isClosed()){e.printStackTrace();}}
+			} catch (Exception e) {System.out.println("The server has diconnected");}
 		}
 	}
 }
