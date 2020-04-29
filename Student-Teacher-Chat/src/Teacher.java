@@ -2,9 +2,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 
 public class Teacher {
@@ -12,13 +12,13 @@ public class Teacher {
 	ArrayList<PrintWriter> clientOutputStreams;
 	int ServerID = 0;
 	public ArrayList<String> names = new ArrayList<String>();
+	public String subject = "";
 
 	public class ClientHandler implements Runnable {
 		public BufferedReader reader;
 		public PrintWriter writer;
 		public Socket sock;
 		public String name;
-		public int index;
 
 		public ClientHandler(Socket clientSocket, PrintWriter printWriter) {
 			try {
@@ -35,20 +35,17 @@ public class Teacher {
 			if (names.size() == 1) {
 				return "You are the only person chatting";
 			}
-
 			String formatted = "";
 			for (int i = 0; i < names.size(); i++) {
 				if (i == (names.size() - 1)) {
-					formatted += "you ";
+					formatted += " you";
 				} else if (i == (names.size() - 2)) {
-					formatted += names.get(i) + " and ";
+					formatted += names.get(i) + " and";
 				} else {
 					formatted += names.get(i) + ", ";
 				}
-
 			}
-
-			return formatted + "are chatting";
+			return formatted + " are chatting";
 		}
 
 		public void run() {
@@ -64,16 +61,10 @@ public class Teacher {
 			String message;
 			try {
 				while (!sock.isClosed() && (message = reader.readLine()) != null) {
-					if (message.equals("STOP LISTENING")) {
-						reader.close();
-					} else {
-						tellEveryone(message);
-					}
+					tellEveryone(message);
 				}
-
-				if (!sock.isClosed()) {
-					names.remove(name);
-				}
+				names.remove(name);
+				clientOutputStreams.remove(writer);
 			} catch (Exception ex) {
 				if(!sock.isClosed()) {
 					ex.printStackTrace();// the connection reset error happens when the student leaves and the socket disconnects so we check if the socket is even open.
@@ -82,10 +73,10 @@ public class Teacher {
 		}
 	}
 
-	public class StudentHandler implements Runnable {
+	public class StudentRunner implements Runnable {
 		@Override
 		public void run() {
-			new Student(ServerID).go();
+			new Student(ServerID, "127.0.0.1").go(); // use the loopback address as the ip of the server
 		}
 	}
 
@@ -95,14 +86,18 @@ public class Teacher {
 		try {
 			try {
 				serverSock = new ServerSocket(0);
-				System.out.println("The Server ID is " + (ServerID = serverSock.getLocalPort()));
-				System.out.println("Share this ID with your students so they can chat with you. Keep this server running so they can connect. If you stop this, the ID may be different next time.");
 			} catch (IOException ex) {
-				System.out.println("There is no free space for the server on this network :( ");
+				System.out.println("There is no free space for the server on this network 🙁");
 				System.exit(1);
 			}
-			System.out.println("Server running");
-			new Thread(new StudentHandler()).start();
+			System.out.println("What subject are you teaching today? 😀");
+			Scanner theScanner = new Scanner(System.in);
+			subject = theScanner.nextLine();
+			// we don't close the scanner because if we do so it will also close System.in and we won't be able to get input later in the Student class.
+			System.out.println("The IP address of the Server is " + (InetAddress.getLocalHost().toString().split("/")[1]));
+			System.out.println("The Server ID is " + (ServerID = serverSock.getLocalPort()));
+			System.out.println("Share this ID with your students so they can chat with you. Keep this server running so they can connect. If you stop this, the ID may be different next time.");
+			new Thread(new StudentRunner()).start();
 			while(true) {
 				Socket clientSocket = serverSock.accept();
 				PrintWriter writer = new PrintWriter(clientSocket.getOutputStream());
@@ -112,6 +107,7 @@ public class Teacher {
 					writer.println(x);
 				}
 				writer.println("end");
+				writer.println(subject);
 				writer.flush();
 				Thread t = new Thread(new ClientHandler(clientSocket, writer));
 				t.start();
@@ -122,10 +118,10 @@ public class Teacher {
 	}
 
 	public void tellEveryone (String message) {
-		for (PrintWriter clientOutputStream : clientOutputStreams) {
+		for (PrintWriter client : clientOutputStreams) {
 			try {
-				clientOutputStream.println(message);
-				clientOutputStream.flush();
+				client.println(message);
+				client.flush();
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

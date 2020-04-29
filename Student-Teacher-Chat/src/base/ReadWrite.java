@@ -69,11 +69,7 @@ public class ReadWrite {
 	public void create() {
 		try {
 			file = new File(path);
-			if (file.createNewFile()) {
-				//System.out.println("File created: " + file.getName());
-			} else {
-				//System.out.println("File already exists.");
-			}
+			file.createNewFile();
 		} catch (IOException e) {
 			System.out.println("An error occurred.");
 			e.printStackTrace();
@@ -83,7 +79,26 @@ public class ReadWrite {
 			FileWriter writer = new FileWriter(path);
 			writer.write(content);
 			writer.close();
-			//System.out.println("Successfully wrote to the file.");
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
+
+	}
+
+	public void append() {
+		try {
+			file = new File(path);
+			file.createNewFile();
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
+
+		try {
+			FileWriter writer = new FileWriter(path, true);
+			writer.write(content);
+			writer.close();
 		} catch (IOException e) {
 			System.out.println("An error occurred.");
 			e.printStackTrace();
@@ -94,11 +109,7 @@ public class ReadWrite {
 	public void delete() {
 		if (delete) {
 			file = new File(path);
-			if(file.delete()) { 
-				//System.out.println("File deleted successfully"); 
-			} else { 
-				System.out.println("Failed to delete the file"); 
-			}	
+			file.delete();
 		} 
 	}
 

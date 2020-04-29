@@ -1,25 +1,16 @@
 import base.ReadWrite;
-
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.awt.event.*;
+import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Scanner;
+import java.util.*;
 
 
 public class Student {
 
-	public String PrivateIPofServer = "chatserver.local";
+	public String IPofServer = "";
 	public int ServerID = 0;
 	public ReadWrite readwrite = new ReadWrite(System.getProperty("user.home") + "/Desktop/ChatRecord.txt");
 	public String yourName;
@@ -38,15 +29,21 @@ public class Student {
 		new Student().go();
 	}
 
-	public Student(int theServerID) {
+	public Student(int theServerID, String theIPofServer) {
 		ServerID = theServerID;
+		IPofServer = theIPofServer;
 		staySilentNoOutput = true;
 	}
 
 	public Student() {}
 
 	public void go() {
-		if (ServerID == 0) { // we check whether ServerID has already been set using the constructor - Student(int)
+		if (IPofServer.equals("")){ // we check whether the ip of the server has already been set using the constructor - Student(int, String)
+			System.out.println("Enter the IP address of the server");
+			IPofServer = scannerIn.nextLine();
+		}
+
+		if (ServerID == 0) { // we check whether ServerID has already been set using the constructor - Student(int, String)
 			System.out.println("Enter Server ID");
 			try {
 				ServerID = Integer.parseInt(scannerIn.nextLine());
@@ -58,20 +55,22 @@ public class Student {
 		setUpNetworking();
 		String personName = "";
 		try {
-			while ((personName = reader.readLine()) != null && !personName.strip().equals("end")) { // we get the lust of names which are already connected to the server.
+			while ((personName = reader.readLine()) != null && !personName.strip().equals("end")) { // we get the list of names of people who are already connected to the server. The server sends "end" when the list is finished
 				list.add(personName.toLowerCase());
 			}
 
 		} catch (IOException e) {
-			System.out.println("Error in Student.go() while trying to get list of names from server. This is just a minor issue. The program will continue to work");
+			System.out.println("Error while trying to get list of names from server. This is just a minor issue. The program will continue to work");
 		}
 		if (readwrite.exists()) {
 			Date date = new Date();
-			record += readwrite.read() + System.lineSeparator() + System.lineSeparator() + date.toString() + System.lineSeparator();
+			readwrite.setPath(System.getProperty("user.home") + "/Desktop/ChatRecord.txt");
+			String theStart = System.lineSeparator() + System.lineSeparator() + date.toString() + System.lineSeparator();
+			readwrite.setContent(theStart);
+			readwrite.append();
+
 		}
 
-		String contentBuffer = readwrite.getContent();
-		String pathBuffer = readwrite.getPath();
 		readwrite.setPath(System.getProperty("user.home") + "/Desktop/.ChatPrefs.txt");
 		if (readwrite.exists()) {
 			System.out.println("Use Prefs? Hit enter. If not, type anything else");
@@ -86,15 +85,15 @@ public class Student {
 			} else {
 				defaultSetup();
 			}
-			readwrite.setPath(pathBuffer);
-			readwrite.setContent(contentBuffer);
 
 		} else {
-			readwrite.setPath(pathBuffer);
-			readwrite.setContent(contentBuffer);
 			defaultSetup();
 		}
-		frame = new JFrame("Chat - " + yourName);
+		try {
+			frame = new JFrame("Chat - " + reader.readLine());
+		} catch (IOException e) {
+			frame = new JFrame(yourName + "'s Chat");
+		}
 		JPanel mainPanel = new JPanel();
 		incoming = new JTextArea(20,30);
 		DefaultCaret caret = (DefaultCaret) incoming.getCaret();
@@ -117,11 +116,12 @@ public class Student {
 		});
 		frame.setVisible(true);
 		outgoing.requestFocusInWindow();
-		Thread readerThread = new Thread (new IncomingReader());
-		readerThread.start();
 		writer.println(yourName);
 		writer.println(yourName + " has joined the chat");
 		writer.flush();
+		scannerIn.close();
+		Thread readerThread = new Thread (new IncomingReader());
+		readerThread.start();
 	}
 
 	private void defaultSetup () {
@@ -151,15 +151,13 @@ public class Student {
 
 	private void setUpNetworking() {
 		try {
-			sock = new Socket(PrivateIPofServer, ServerID);
-			InputStreamReader streamReader = new InputStreamReader(sock.getInputStream());
-			reader = new BufferedReader(streamReader);
+			sock = new Socket(IPofServer, ServerID);
+			reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 			writer = new PrintWriter(sock.getOutputStream());
 			if (!staySilentNoOutput) {
 				System.out.println("Connected to Server");
 			}
-
-		} catch(IOException ex) {System.out.println("The server isn't online or the ID is incorrect. Bye!"); System.exit(1);}
+		} catch(IOException ex) {System.out.println("The server isn't online or the Server info is incorrect(IP and ID). Bye!"); System.exit(1);}
 	}
 
 	public class KeyPressListener implements KeyListener {
@@ -205,23 +203,15 @@ public class Student {
 	}
 
 	public void close() {
-		scannerIn.close();
 		frame.setVisible(false);
 		writer.println(yourName + " has left the chat");
 		writer.flush();
-		writer.println("STOP LISTENING");
-		writer.flush();
-		if (toRecord) {
-			readwrite.setPath(System.getProperty("user.home") + "/Desktop/ChatRecord.txt");
-			readwrite.setContent(record);
-			readwrite.create();
-		}
 		writer.close();
 		try {
 			reader.close();
 			sock.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			//no need to handle this. The program is going to exit anyways
 		}
 		System.exit(0);
 	}
@@ -231,12 +221,14 @@ public class Student {
 		public void run () {
 			String message;
 			try {
-				while (!sock.isClosed() && (message = reader.readLine()) != null) {
+				while ((message = reader.readLine()) != null) {
 					System.out.println(message);
-					record += message + System.lineSeparator();
 					incoming.append(message + System.lineSeparator());
-					readwrite.setContent(record);
-					readwrite.create();
+					if (toRecord) {
+						readwrite.setPath(System.getProperty("user.home") + "/Desktop/ChatRecord.txt");
+						readwrite.setContent(message + System.lineSeparator());
+						readwrite.append();
+					}
 				}
 			} catch (Exception e) {if (!sock.isClosed()){e.printStackTrace();}}
 		}
