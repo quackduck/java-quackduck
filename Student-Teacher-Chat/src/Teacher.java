@@ -87,10 +87,10 @@ public class Teacher {
 			try {
 				serverSock = new ServerSocket(0);
 			} catch (IOException ex) {
-				System.out.println("There is no free space for the server on this network 🙁");
+				System.out.println("There is no free space for the server on this network. :(");
 				System.exit(1);
 			}
-			System.out.println("What subject are you teaching today? 😀");
+			System.out.println("What subject are you teaching today? :)");
 			Scanner theScanner = new Scanner(System.in);
 			subject = theScanner.nextLine();
 			// we don't close the scanner because if we do so it will also close System.in and we won't be able to get input later in the Student class.
