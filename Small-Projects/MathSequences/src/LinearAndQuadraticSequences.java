@@ -1,9 +1,11 @@
-public class MathSequences {
+import java.util.Scanner;
+
+public class LinearAndQuadraticSequences {
     public static void main (String[] args) {
-        if (args.length > 3) {
-            System.out.println(solveQuadraticSequence(Double.parseDouble(args[0]), Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3])));
-        } else if (args.length == 3) {
-            System.out.println(solveQuadraticSequence(Double.parseDouble(args[0]), Double.parseDouble(args[1]), Double.parseDouble(args[2])));
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please enter three numbers in the sequence");
+        while (true) {
+            System.out.println(solveQuadraticSequence(scanner.nextDouble(), scanner.nextDouble(), scanner.nextDouble()));
         }
     }
 
