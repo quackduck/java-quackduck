@@ -17,9 +17,9 @@ public class Scraper {
 
 	public static void main(String[] args) {
 		Scraper scraper = new Scraper();
-		scraper.setAddress("icanhazip.com");
+		scraper.setAddress("github.com/quackduck/java-quackduck.git");
 		scraper.doRequest();
-		System.out.println(scraper.data());
+		System.out.println(scraper.everything());
 	}
 
 	public void doRequest() {
@@ -39,8 +39,6 @@ public class Scraper {
 			while ((str = reader.readLine()) != null) {
 				everything += str + System.lineSeparator();
 			}
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
