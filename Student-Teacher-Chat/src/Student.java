@@ -132,9 +132,12 @@ public class Student {
 		System.out.println("Enter your chat username");
 		yourName = scannerIn.nextLine();
 		while (yourName.strip().equals("") || list.contains(yourName.toLowerCase())) {
-			System.out.println("That name's taken or is invalid. Choose another one");
-			if (yourName.strip().equals("")) {System.out.println("Seriously? Blank names aren't allowed :) Choose another one"); }
-			else {System.out.println("That name's been taken :( Choose another one");}
+			if (yourName.strip().equals("")) {
+				System.out.println("Seriously? Blank names aren't allowed :) Choose another one");
+			}
+			else {
+				System.out.println("That name's been taken :( Choose another one");
+			}
 			yourName = scannerIn.nextLine();
 		}
 		System.out.println("If you want to save a record of your chat, press enter. Else type anything else");

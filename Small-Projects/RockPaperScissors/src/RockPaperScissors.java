@@ -24,18 +24,18 @@ public class RockPaperScissors {
 		}
 	}
 
-	public String generate( ) {
+	public String generate() {
 		return things[(int) Math.floor((3 * Math.random()))];
 	}
 
-	public String eval(String a , String b) {
-		if (a.equalsIgnoreCase(b)) {return "We both selected the same thing";}
-		else if (a.equalsIgnoreCase(things[0]) && b.equalsIgnoreCase(things[1])) { return "You win!";}
-		else if (b.equalsIgnoreCase(things[0]) && a.equalsIgnoreCase(things[1])) { return "You lose";}
-		else if (a.equalsIgnoreCase(things[1]) && b.equalsIgnoreCase(things[2])) {return "You win!";}
-		else if (b.equalsIgnoreCase(things[1]) && a.equalsIgnoreCase(things[2])) {return "You lose";}
-		else if (a.equalsIgnoreCase(things[2]) && b.equalsIgnoreCase(things[0])) {return "You win!";}
-		else if (b.equalsIgnoreCase(things[2]) && a.equalsIgnoreCase(things[0])) {return "You lose";}
+	public String eval(String computerChoice , String humanChoice) {
+		if (computerChoice.equalsIgnoreCase(humanChoice)) {return "We both selected the same thing";}
+		else if (computerChoice.equalsIgnoreCase(things[0]) && humanChoice.equalsIgnoreCase(things[1])) { return "You win!";}
+		else if (humanChoice.equalsIgnoreCase(things[0]) && computerChoice.equalsIgnoreCase(things[1])) { return "You lose";}
+		else if (computerChoice.equalsIgnoreCase(things[1]) && humanChoice.equalsIgnoreCase(things[2])) {return "You win!";}
+		else if (humanChoice.equalsIgnoreCase(things[1]) && computerChoice.equalsIgnoreCase(things[2])) {return "You lose";}
+		else if (computerChoice.equalsIgnoreCase(things[2]) && humanChoice.equalsIgnoreCase(things[0])) {return "You win!";}
+		else if (humanChoice.equalsIgnoreCase(things[2]) && computerChoice.equalsIgnoreCase(things[0])) {return "You lose";}
 		else {return "YOU ARE STUPID";} 
 	}
 }

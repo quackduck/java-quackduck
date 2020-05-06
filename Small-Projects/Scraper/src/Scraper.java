@@ -17,7 +17,7 @@ public class Scraper {
 
 	public static void main(String[] args) {
 		Scraper scraper = new Scraper();
-		scraper.setAddress("github.com/quackduck/java-quackduck.git");
+		scraper.setAddress("www.dictionary.com");
 		scraper.doRequest();
 		System.out.println(scraper.everything());
 	}
@@ -31,8 +31,9 @@ public class Scraper {
 			writer = new PrintWriter(sock.getOutputStream());
 			writer.println("GET " + file + " HTTP/1.1");
 			writer.println("Host: " + website);
+			writer.println("Accept: */*");
 			writer.println("Connection: close");
-			writer.println("User-Agent: bot");
+			writer.println("User-Agent: Mozilla/4.0 (compatible; MSIE 6.01; Windows NT 6.0)");
 			writer.println();
 			writer.flush();
 			String str;
