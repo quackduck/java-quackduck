@@ -17,7 +17,6 @@ public class Student {
 	public boolean toRecord = true;
 	public ArrayList<String> list = new ArrayList<String>();
 	public Scanner scannerIn = new Scanner(System.in);
-	public boolean staySilentNoOutput = false;
 	JTextArea incoming;
 	JTextField outgoing;
 	BufferedReader reader;
@@ -27,7 +26,6 @@ public class Student {
 	public Student(int theServerID, String theIPofServer) {
 		ServerID = theServerID;
 		IPofServer = theIPofServer;
-		staySilentNoOutput = true;
 	}
 
 	public Student() {}
@@ -157,10 +155,10 @@ public class Student {
 			sock = new Socket(IPofServer, ServerID);
 			reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 			writer = new PrintWriter(sock.getOutputStream());
-			if (!staySilentNoOutput) {
-				System.out.println("Connected to Server");
-			}
-		} catch(IOException ex) {System.out.println("The server isn't online or the Server info is incorrect(IP and ID). Bye!"); System.exit(1);}
+		} catch(IOException ex) {
+			System.out.println("The server isn't online or the Server info is incorrect(IP and/or ID). Bye!");
+			System.exit(1);
+		}
 	}
 
 	public void sendStuff() {

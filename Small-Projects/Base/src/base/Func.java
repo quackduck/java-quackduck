@@ -3,7 +3,7 @@ package base;
 public class Func {
 
 	public static void main(String[] args) {
-		quadratic(6, 0, 0);
+		quadratic(-2, 12, 560);
 	}
 	
 	public static void quadratic(double a, double b, double c) {

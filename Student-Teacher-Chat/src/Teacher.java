@@ -97,6 +97,7 @@ public class Teacher {
 			System.out.println("The IP address of the Server is " + (InetAddress.getLocalHost().toString().split("/")[1]));
 			System.out.println("The Server ID is " + (ServerID = serverSock.getLocalPort()));
 			System.out.println("Share this ID with your students so they can chat with you. Keep this server running so they can connect. If you stop this, the ID may be different next time.");
+			System.out.println("I love maths");
 			new Thread(new StudentRunner()).start();
 			while(true) {
 				Socket clientSocket = serverSock.accept();
