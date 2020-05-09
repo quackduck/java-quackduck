@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -11,7 +8,7 @@ public class Teacher {
 
 	ArrayList<PrintWriter> clientOutputStreams;
 	int ServerID = 0;
-	public ArrayList<String> names = new ArrayList<String>();
+	public ArrayList<String> names = new ArrayList<>();
 	public String subject = "";
 
 	public class ClientHandler implements Runnable {
@@ -21,6 +18,7 @@ public class Teacher {
 		public String name;
 
 		public ClientHandler(Socket clientSocket, PrintWriter printWriter) {
+			
 			try {
 				sock = clientSocket;
 				InputStreamReader isReader = new InputStreamReader(sock.getInputStream());
@@ -81,7 +79,7 @@ public class Teacher {
 	}
 
 	public void go () {
-		clientOutputStreams = new ArrayList<PrintWriter>();
+		clientOutputStreams = new ArrayList<>();
 		ServerSocket serverSock = null;
 		try {
 			try {

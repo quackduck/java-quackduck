@@ -10,35 +10,8 @@ public class ReadWrite {
 
 	private String path = "";
 	private String content = "";
-	private boolean delete = false;
 	private File file;
 	public static String newline = System.lineSeparator();
-	
-
-	public static void main(String[] args) {
-
-	}
-	
-	public ReadWrite(boolean disableDelete) {
-		delete = !disableDelete;
-	}
-	
-	public ReadWrite(String thePath, String theContent, boolean togo) {
-		path = thePath;
-		content = theContent;
-		if (togo) {
-			create();
-		}
-	}
-	
-	public ReadWrite(String thePath, String theContent) {
-		path = thePath;
-		content = theContent;
-	}
-	
-	public ReadWrite(String thePath) {
-		path = thePath;
-	}
 	
 	public ReadWrite() {}
 
@@ -48,22 +21,6 @@ public class ReadWrite {
 
 	public void setContent(String x) {
 		content = x;
-	}
-	
-	public void setDelete(boolean set) {
-		delete = set;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public String getContent() {
-		return content;
-	}
-	
-	public boolean getDelete() {
-		return delete;
 	}
 
 	public void create() {
@@ -104,13 +61,6 @@ public class ReadWrite {
 			e.printStackTrace();
 		}
 
-	}
-
-	public void delete() {
-		if (delete) {
-			file = new File(path);
-			file.delete();
-		} 
 	}
 
 	public String read() {

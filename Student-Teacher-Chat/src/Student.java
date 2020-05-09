@@ -12,11 +12,12 @@ public class Student {
 
 	public String IPofServer = "";
 	public int ServerID = 0;
-	public ReadWrite readwrite = new ReadWrite(System.getProperty("user.home") + "/Desktop/ChatRecord.txt");
+	public ReadWrite readwrite = new ReadWrite();
 	public String yourName;
 	public boolean toRecord = true;
 	public ArrayList<String> list = new ArrayList<String>();
 	public Scanner scannerIn = new Scanner(System.in);
+	public boolean startedFromConstructor = false;
 	JTextArea incoming;
 	JTextField outgoing;
 	BufferedReader reader;
@@ -26,21 +27,19 @@ public class Student {
 	public Student(int theServerID, String theIPofServer) {
 		ServerID = theServerID;
 		IPofServer = theIPofServer;
+		startedFromConstructor = true;
 	}
 
 	public Student() {}
 
-	public static void main(String[] args) {
-		new Student().go();
-	}
+	public static void main(String[] args) {new Student().go();}
 
 	public void go() {
-		if (IPofServer.equals("")){ // we check whether the ip of the server has already been set using the constructor - Student(int, String)
+		if (!startedFromConstructor){ // we check whether the IP of the server has already been set using the constructor - Student(int, String)
 			System.out.println("Enter the IP address of the server");
 			IPofServer = scannerIn.nextLine();
 		}
-
-		if (ServerID == 0) { // we check whether ServerID has already been set using the constructor - Student(int, String)
+		if (!startedFromConstructor) { // we check whether ServerID has already been set using the constructor - Student(int, String)
 			System.out.println("Enter Server ID");
 			try {
 				ServerID = Integer.parseInt(scannerIn.nextLine());
@@ -48,7 +47,6 @@ public class Student {
 				System.out.println("Invalid ID");
 				System.exit(0);
 			}
-
 		}
 		setUpNetworking();
 		String personName = "";
@@ -56,7 +54,6 @@ public class Student {
 			while ((personName = reader.readLine()) != null && !personName.strip().equals("end")) { // we get the list of names of people who are already connected to the server. The server sends "end" when the list is finished
 				list.add(personName.toLowerCase());
 			}
-
 		} catch (IOException e) {
 			System.out.println("Error while trying to get list of names from server. This is just a minor issue. The program will continue to work");
 		}
@@ -96,6 +93,16 @@ public class Student {
 		} catch (IOException e) {
 			frame = new JFrame(yourName + "'s Chat");
 		}
+		setupGUI();
+		writer.println(yourName);
+		writer.println(yourName + " has joined the chat");
+		writer.flush();
+		scannerIn.close();
+		Thread readerThread = new Thread (new IncomingReader());
+		readerThread.start();
+	}
+
+	private void setupGUI() {
 		JPanel mainPanel = new JPanel();
 		incoming = new JTextArea(20,30);
 		DefaultCaret caret = (DefaultCaret) incoming.getCaret();
@@ -105,7 +112,14 @@ public class Student {
 		incoming.setEditable(false);
 		JScrollPane textScroller = new JScrollPane(incoming);
 		outgoing = new JTextField(30);
-		outgoing.addKeyListener(new KeyPressListener());
+		outgoing.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					sendStuff();
+				}
+			}
+		});
 		mainPanel.add(textScroller);
 		mainPanel.add(outgoing);
 		frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
@@ -118,12 +132,6 @@ public class Student {
 		});
 		frame.setVisible(true);
 		outgoing.requestFocusInWindow();
-		writer.println(yourName);
-		writer.println(yourName + " has joined the chat");
-		writer.flush();
-		scannerIn.close();
-		Thread readerThread = new Thread (new IncomingReader());
-		readerThread.start();
 	}
 
 	private void defaultSetup () {
@@ -201,20 +209,6 @@ public class Student {
 			//no need to handle this. The program is going to exit anyways
 		}
 		System.exit(0);
-	}
-
-	public class KeyPressListener implements KeyListener {
-		@Override
-		public void keyTyped(KeyEvent e) {}
-		@Override
-		public void keyPressed(KeyEvent e) {}
-
-		@Override
-		public void keyReleased(KeyEvent e) {
-			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-				sendStuff();
-			}
-		}
 	}
 
 	public class IncomingReader implements Runnable {
