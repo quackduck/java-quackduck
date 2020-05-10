@@ -1,3 +1,5 @@
+package hello;
+
 public class CMYKtoRGB {
     public static void main(String[] args) {
         double white = 1 - Double.parseDouble(args[3]);
