@@ -12,11 +12,14 @@ public class A1328 {
             a = scan.nextInt();
             b = scan.nextInt();
             int result = 0;
-            while (a % b != 0) {
-                a++;
-                result++;
+            if (a % b != 0) {
+                result = b - (a % b);
             }
             System.out.println(result);
         }
     }
 }
+
+
+// a + b - remainder /b
+
