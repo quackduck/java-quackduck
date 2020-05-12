@@ -20,7 +20,7 @@ public class RandomWalkers {
             }
             longSumOfSteps += intSteps;
         }
-        System.out.println((double) longSumOfSteps /(double) intTrials);
+        System.out.println("average number of steps = " + (double) longSumOfSteps /(double) intTrials);
     }
 }
 
