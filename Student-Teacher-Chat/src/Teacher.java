@@ -73,9 +73,7 @@ public class Teacher {
 
 	public class StudentRunner implements Runnable {
 		@Override
-		public void run() {
-			new Student(ServerID, "127.0.0.1").go(); // use the loopback address as the ip of the server
-		}
+		public void run() { new Student(ServerID, "127.0.0.1").go(); } // use the loop back address as the ip of the server
 	}
 
 	public void go () {
@@ -95,13 +93,11 @@ public class Teacher {
 			System.out.println("The IP address of the Server is " + (InetAddress.getLocalHost().toString().split("/")[1]));
 			System.out.println("The Server ID is " + (ServerID = serverSock.getLocalPort()));
 			System.out.println("Share this ID with your students so they can chat with you. Keep this server running so they can connect. If you stop this, the ID may be different next time.");
-			System.out.println("I love maths");
 			new Thread(new StudentRunner()).start();
 			while(true) {
 				Socket clientSocket = serverSock.accept();
 				PrintWriter writer = new PrintWriter(clientSocket.getOutputStream());
 				clientOutputStreams.add(writer);
-				cleanList();
 				for (String x : names) {
 					writer.println(x);
 				}
@@ -126,11 +122,7 @@ public class Teacher {
 			}
 		}
 	}
-	public void cleanList() {
-		while (names.contains(null)) {
-			names.remove(null);
-		}
-	}
+
 	public static void main (String[] args) {
 		new Teacher().go();
 	}

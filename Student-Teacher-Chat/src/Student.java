@@ -1,9 +1,11 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.Socket;
+import java.net.URL;
 import java.util.*;
 
 
@@ -12,7 +14,7 @@ public class Student {
 	public String IPofServer = "";
 	public int ServerID = 0;
 	public ReadWrite readwrite = new ReadWrite();
-	public String yourName;
+	public String userName;
 	public boolean toRecord = true;
 	public ArrayList<String> list = new ArrayList<String>();
 	public Scanner scannerIn = new Scanner(System.in);
@@ -64,12 +66,12 @@ public class Student {
 				String[] stringArr = readwrite.read().split(System.lineSeparator());
 				try {
 					toRecord = Boolean.parseBoolean(stringArr[1]);
-					yourName = stringArr[0];
+					userName = stringArr[0];
 				} catch (Exception e) {
 					System.out.println("Oops! An error occurred.");
 					defaultSetup();
 				}
-				if(list.contains(yourName.toLowerCase())) {
+				if(list.contains(userName.toLowerCase())) {
 					System.out.println("Sorry, the username in your prefs has been taken");
 					defaultSetup();
 				}
@@ -88,13 +90,13 @@ public class Student {
 			readwrite.append();
 		}
 		try {
-			frame = new JFrame(yourName + "'s Chat - " + reader.readLine());
+			frame = new JFrame(userName + "'s Chat - " + reader.readLine());
 		} catch (IOException e) {
-			frame = new JFrame(yourName + "'s Chat");
+			frame = new JFrame(userName + "'s Chat");
 		}
 		setupGUI();
-		writer.println(yourName);
-		writer.println(yourName + " has joined the chat");
+		writer.println(userName);
+		writer.println(userName + " has joined the chat");
 		writer.flush();
 		scannerIn.close();
 		Thread readerThread = new Thread (new IncomingReader());
@@ -103,14 +105,17 @@ public class Student {
 
 	private void setupGUI() {
 		JPanel mainPanel = new JPanel();
+		outgoing = new JTextField(30);
 		incoming = new JTextArea(20,30);
+		incoming.setBackground(generateBrightRandomColor());
+		outgoing.setBackground(generateBrightRandomColor());
+		mainPanel.setBackground(generateBrightRandomColor());
 		DefaultCaret caret = (DefaultCaret) incoming.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-		incoming.setLineWrap(true);
+		incoming.setLineWrap(false);
 		incoming.setWrapStyleWord(true);
 		incoming.setEditable(false);
 		JScrollPane textScroller = new JScrollPane(incoming);
-		outgoing = new JTextField(30);
 		outgoing.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -133,17 +138,25 @@ public class Student {
 		outgoing.requestFocusInWindow();
 	}
 
+	private Color generateBrightRandomColor () {
+		float x = 0.15f; // high value = wider range of colors with higher probability of darker colors. 0.1 makes light pastels. 0.2 makes pastels
+		float r = (float) ((Math.random() * x)+(1-x));
+		float g = (float) ((Math.random() * x)+(1-x));
+		float b = (float) ((Math.random() * x)+(1-x));
+		return new Color(r, g, b);
+	}
+
 	private void defaultSetup () {
 		System.out.println("Enter your chat username");
-		yourName = scannerIn.nextLine();
-		while (yourName.strip().equals("") || list.contains(yourName.toLowerCase())) {
-			if (yourName.strip().equals("")) {
+		userName = scannerIn.nextLine();
+		while (userName.strip().equals("") || list.contains(userName.toLowerCase())) {
+			if (userName.strip().equals("")) {
 				System.out.println("Seriously? Blank names aren't allowed :) Choose another one");
 			}
 			else {
 				System.out.println("That name's been taken :( Choose another one");
 			}
-			yourName = scannerIn.nextLine();
+			userName = scannerIn.nextLine();
 		}
 		System.out.println("If you want to save a record of your chat, press enter. Else type anything else");
 		if (!scannerIn.nextLine().equals("")) {
@@ -152,7 +165,7 @@ public class Student {
 		System.out.println("Save prefs? Type yes. If not just hit enter");
 		if (scannerIn.nextLine().equalsIgnoreCase("yes")) {
 			readwrite.setPath(System.getProperty("user.home") + "/Desktop/ChatPrefs.txt");
-			readwrite.setContent(yourName + System.lineSeparator() + toRecord + System.lineSeparator() + System.lineSeparator() + "Please do not edit the second line of this file to anything other than \"true\" or \"false\". Setting the second line to anything other than those values will mean that the next time you use prefs your chat will not be recorded. You can edit the first line to whatever you wish your name to be.");
+			readwrite.setContent(userName + System.lineSeparator() + toRecord + System.lineSeparator() + System.lineSeparator() + "Please do not edit the second line of this file to anything other than \"true\" or \"false\". Setting the second line to anything other than those values will mean that the next time you use prefs your chat will not be recorded. You can edit the first line to whatever you wish your name to be.");
 			readwrite.create();
 		}
 	}
@@ -177,7 +190,7 @@ public class Student {
 					break;
 				case "bye":
 				case "au revoir":
-					writer.println(yourName + ":  " + text);
+					writer.println(userName + ":  " + text);
 					writer.flush();
 					close();
 					break;
@@ -188,7 +201,7 @@ public class Student {
 				case "":
 					break;
 				default:
-					writer.println(yourName + ":  " + text);
+					writer.println(userName + ":  " + text);
 					writer.flush();
 			}
 		} catch(Exception ex) {ex.printStackTrace();}
@@ -198,7 +211,7 @@ public class Student {
 
 	public void close() {
 		frame.setVisible(false);
-		writer.println(yourName + " has left the chat");
+		writer.println(userName + " has left the chat");
 		writer.flush();
 		writer.close();
 		try {
@@ -224,7 +237,7 @@ public class Student {
 						readwrite.append();
 					}
 				}
-			} catch (Exception e) {System.out.println("The server has disconnected");}
+			} catch (Exception e) {run();}
 		}
 	}
 }
