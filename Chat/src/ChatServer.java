@@ -141,9 +141,8 @@ public class ChatServer {
 	public void tellEveryone (String message) {
 		for (PrintWriter clientOutputStream : clientOutputStreams) {
 			try {
-				PrintWriter writer = clientOutputStream;
-				writer.println(message);
-				writer.flush();
+				clientOutputStream.println(message);
+				clientOutputStream.flush();
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

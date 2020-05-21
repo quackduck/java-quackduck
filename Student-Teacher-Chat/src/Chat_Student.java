@@ -1,15 +1,13 @@
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.Socket;
-import java.net.URL;
 import java.util.*;
 
 
-public class Student {
+public class Chat_Student {
 
 	public String IPofServer = "";
 	public int ServerID = 0;
@@ -19,28 +17,30 @@ public class Student {
 	public ArrayList<String> list = new ArrayList<String>();
 	public Scanner scannerIn = new Scanner(System.in);
 	public boolean startedFromConstructor = false;
-	JTextArea incoming;
-	JTextField outgoing;
+	public boolean admin = false;
+	public JTextArea incoming;
+	public JTextField outgoing;
 	BufferedReader reader;
 	PrintWriter writer;
 	Socket sock;
 	JFrame frame;
-	public Student(int theServerID, String theIPofServer) {
+	public Chat_Student(int theServerID, String theIPofServer, boolean isAdmin) {
 		ServerID = theServerID;
 		IPofServer = theIPofServer;
 		startedFromConstructor = true;
+		admin = isAdmin;
 	}
 
-	public Student() {}
+	public Chat_Student() {}
 
-	public static void main(String[] args) {new Student().go();}
+	public static void main(String[] args) {new Chat_Student().go();}
 
 	public void go() {
-		if (!startedFromConstructor){ // we check whether the IP of the server has already been set using the constructor - Student(int, String)
+		if (!startedFromConstructor){ // we check whether the IP of the server has already been set using the constructor - Chat_Student(int, String)
 			System.out.println("Enter the IP address of the server");
 			IPofServer = scannerIn.nextLine();
 		}
-		if (!startedFromConstructor) { // we check whether ServerID has already been set using the constructor - Student(int, String)
+		if (!startedFromConstructor) { // we check whether ServerID has already been set using the constructor - Chat_Student(int, String)
 			System.out.println("Enter Server ID");
 			try {
 				ServerID = Integer.parseInt(scannerIn.nextLine());
@@ -52,7 +52,7 @@ public class Student {
 		setUpNetworking();
 		String personName = "";
 		try {
-			while ((personName = reader.readLine()) != null && !personName.strip().equals("end")) { // we get the list of names of people who are already connected to the server. The server sends "end" when the list is finished
+			while ((personName = reader.readLine()) != null && !personName.equals("end")) { // we get the list of names of people who are already connected to the server. The server sends "end" when the list is finished
 				list.add(personName.toLowerCase());
 			}
 		} catch (IOException e) {
@@ -61,12 +61,14 @@ public class Student {
 
 		readwrite.setPath(System.getProperty("user.home") + "/Desktop/ChatPrefs.txt");
 		if (readwrite.exists()) {
-			System.out.println("Use Prefs? Hit enter. If not, type anything else");
+			String[] stringArr = readwrite.read().split(System.lineSeparator());
+			String nameBuffer = stringArr[0];
+			System.out.println("Hi " + nameBuffer + "!");
+			System.out.println("Do you want to use the prefs? Hit enter. If not, type anything else");
 			if (scannerIn.nextLine().equals("")) {
-				String[] stringArr = readwrite.read().split(System.lineSeparator());
 				try {
 					toRecord = Boolean.parseBoolean(stringArr[1]);
-					userName = stringArr[0];
+					userName = nameBuffer;
 				} catch (Exception e) {
 					System.out.println("Oops! An error occurred.");
 					defaultSetup();
@@ -175,7 +177,7 @@ public class Student {
 			sock = new Socket(IPofServer, ServerID);
 			reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 			writer = new PrintWriter(sock.getOutputStream());
-		} catch(IOException ex) {
+		} catch(Exception ex) {
 			System.out.println("The server isn't online or the Server info is incorrect(IP and/or ID). Bye!");
 			System.exit(1);
 		}
@@ -201,8 +203,17 @@ public class Student {
 				case "":
 					break;
 				default:
-					writer.println(userName + ":  " + text);
-					writer.flush();
+					if (text.contains("/remove/")) {
+						if (admin) {
+							writer.println(text);
+							writer.flush();
+						} else {
+							System.out.println("You're not an admin :(");
+						}
+					} else {
+						writer.println(userName + ":  " + text);
+						writer.flush();
+					}
 			}
 		} catch(Exception ex) {ex.printStackTrace();}
 		outgoing.setText("");
@@ -228,7 +239,7 @@ public class Student {
 		public void run () {
 			String message;
 			try {
-				while ((message = reader.readLine()) != null) {
+				while (!sock.isClosed() && (message = reader.readLine()) != null) {
 					System.out.println(message);
 					incoming.append(message + System.lineSeparator());
 					if (toRecord) {
@@ -237,7 +248,12 @@ public class Student {
 						readwrite.append();
 					}
 				}
-			} catch (Exception e) {run();}
+				System.out.println("You were removed or the teacher has ended the chat. The program is shutting down...");
+				close();
+			} catch (Exception e) {
+				System.out.println("Could not get message to server.");
+				run();
+			}
 		}
 	}
 }
