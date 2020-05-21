@@ -101,12 +101,12 @@ public class Chat_Student {
 		writer.println(userName + " has joined the chat");
 		writer.flush();
 		if (startedFromConstructor) {
-			new Thread(new commandSender()).start();
+			new Thread(new CommandSender()).start();
 		}
 		new Thread (new IncomingReader()).start();
 	}
 
-	public class commandSender implements Runnable {
+	public class CommandSender implements Runnable {
 		@Override
 		public void run() {
 			teacher.execCommands(scannerIn.nextLine());
@@ -249,8 +249,7 @@ public class Chat_Student {
 				System.out.println("You were removed or the teacher has ended the chat. The program is shutting down...");
 				close();
 			} catch (Exception e) {
-				System.out.println("Could not connect to server.");
-				run();
+				run(); // dont stop reading just because one message was not sent.
 			}
 		}
 	}
