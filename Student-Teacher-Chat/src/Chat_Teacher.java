@@ -12,6 +12,8 @@ public class Chat_Teacher {
 	public String subject = "";
 	public Set<String> namesSet = namesToWriters.keySet();
 	public Chat_Student student = null;
+	Scanner theScanner = new Scanner(System.in);
+	public Chat_Teacher teacher = this;
 
 	public class ClientHandler implements Runnable {
 		public BufferedReader reader;
@@ -75,7 +77,28 @@ public class Chat_Teacher {
 
 	public class StudentRunner implements Runnable {
 		@Override
-		public void run() {(student = new Chat_Student(ServerID, "127.0.0.1", true)).go(); } // use the loop back address as the ip of the server
+		public void run() {(student = new Chat_Student(ServerID, "127.0.0.1", teacher)).go(); } // use the loop back address as the ip of the server
+	}
+
+	public void execCommands (String theCommand) {
+		String target = "";
+		try {
+			String command = theCommand.split(" ")[0];
+			if (theCommand.split(" ", 2).length > 1) {
+				target = theCommand.split(" ", 2)[1]; // split into two parts and select the second
+			}
+			target = target.strip();
+			switch (command) {
+				case "remove" :
+					removeName(target);
+					break;
+				case "close" :
+					student.close();
+					break;
+				default:
+					System.out.println("Invalid command");
+			}
+		} catch (Exception ignored) {}
 	}
 
 	public void go () {
@@ -88,14 +111,13 @@ public class Chat_Teacher {
 				System.exit(1);
 			}
 			System.out.println("What subject are you teaching today? :)");
-			Scanner theScanner = new Scanner(System.in);
 			subject = theScanner.nextLine();
 			// we don't close the scanner because if we do so it will also close System.in and we won't be able to get input later in the Chat_Student class.
 			System.out.println("The IP address of the Server is " + (InetAddress.getLocalHost().toString().split("/")[1]));
 			System.out.println("The Server ID is " + (ServerID = serverSock.getLocalPort()));
 			System.out.println("Share this ID with your students so they can chat with you. Keep this server running so they can connect. If you stop this, the ID may be different next time.");
+			System.out.println("You can enter commands here. Commands you can run are: \"remove <name of student to remove>\"(removes the specified student. You can also remove yourself) and \"close\"(Shuts the program down). Commands can only be run after setup(entering name, prefs etc.)");
 			new Thread(new StudentRunner()).start();
-			//noinspection InfiniteLoopStatement
 			while(true) {
 				try {
 					Socket clientSocket = serverSock.accept();
@@ -119,30 +141,22 @@ public class Chat_Teacher {
 	}
 
 	public void tellEveryone (String message) {
-		if (message.contains("/remove/")) {
+		for (PrintWriter clientWriter : namesToWriters.values()) {
 			try {
-				String target = message.split(" ", 2)[1];
-				if (namesSet.contains(target)) {
-					removeName(target);
-					System.out.println(namesSet.toString());
-				}
-			} catch (Exception ignored) {}
-		} else {
-			for (PrintWriter clientWriter : namesToWriters.values()) {
-				try {
-					clientWriter.println(message);
-					clientWriter.flush();
-				} catch (Exception ex) {
-					//just one client didn't get it.
-				}
+				clientWriter.println(message);
+				clientWriter.flush();
+			} catch (Exception ex) {
+				//just one client didn't get the message.
 			}
 		}
 	}
 
 	public void removeName(String targetName) {
-		namesToWriters.get(targetName).close();
-		namesToWriters.remove(targetName);
-		tellEveryone(targetName + " has been kicked");
+		if (namesSet.contains(targetName)) {
+			namesToWriters.get(targetName).close();
+			namesToWriters.remove(targetName);
+			tellEveryone(targetName + " has been removed");
+		}
 	}
 
 	public static void main (String[] args) {

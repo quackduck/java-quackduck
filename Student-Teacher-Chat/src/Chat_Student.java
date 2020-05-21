@@ -17,18 +17,18 @@ public class Chat_Student {
 	public ArrayList<String> list = new ArrayList<String>();
 	public Scanner scannerIn = new Scanner(System.in);
 	public boolean startedFromConstructor = false;
-	public boolean admin = false;
 	public JTextArea incoming;
 	public JTextField outgoing;
+	public Chat_Teacher teacher = null;
 	BufferedReader reader;
 	PrintWriter writer;
 	Socket sock;
 	JFrame frame;
-	public Chat_Student(int theServerID, String theIPofServer, boolean isAdmin) {
+	public Chat_Student(int theServerID, String theIPofServer, Chat_Teacher theCallingTeacher) {
 		ServerID = theServerID;
 		IPofServer = theIPofServer;
 		startedFromConstructor = true;
-		admin = isAdmin;
+		teacher = theCallingTeacher;
 	}
 
 	public Chat_Student() {}
@@ -100,9 +100,17 @@ public class Chat_Student {
 		writer.println(userName);
 		writer.println(userName + " has joined the chat");
 		writer.flush();
-		scannerIn.close();
-		Thread readerThread = new Thread (new IncomingReader());
-		readerThread.start();
+		if (startedFromConstructor) {
+			new Thread(new commandSender()).start();
+		}
+		new Thread (new IncomingReader()).start();
+	}
+
+	public class commandSender implements Runnable {
+		@Override
+		public void run() {
+			teacher.execCommands(scannerIn.nextLine());
+		}
 	}
 
 	private void setupGUI() {
@@ -203,17 +211,8 @@ public class Chat_Student {
 				case "":
 					break;
 				default:
-					if (text.contains("/remove/")) {
-						if (admin) {
-							writer.println(text);
-							writer.flush();
-						} else {
-							System.out.println("You're not an admin :(");
-						}
-					} else {
-						writer.println(userName + ":  " + text);
-						writer.flush();
-					}
+					writer.println(userName + ":  " + text);
+					writer.flush();
 			}
 		} catch(Exception ex) {ex.printStackTrace();}
 		outgoing.setText("");
@@ -240,7 +239,6 @@ public class Chat_Student {
 			String message;
 			try {
 				while (!sock.isClosed() && (message = reader.readLine()) != null) {
-					System.out.println(message);
 					incoming.append(message + System.lineSeparator());
 					if (toRecord) {
 						readwrite.setPath(System.getProperty("user.home") + "/Desktop/ChatRecord.txt");
@@ -251,7 +249,7 @@ public class Chat_Student {
 				System.out.println("You were removed or the teacher has ended the chat. The program is shutting down...");
 				close();
 			} catch (Exception e) {
-				System.out.println("Could not get message to server.");
+				System.out.println("Could not connect to server.");
 				run();
 			}
 		}
