@@ -26,8 +26,9 @@ public class Sender {
             FileInputStream reader = new FileInputStream(theFileToSend);
             //BufferedInputStream fileReader = new BufferedInputStream(reader);
             byte[] buffer = new byte[1024];
-            while (reader.read(buffer) > 0) {
-                sendFile.write(buffer);
+            int count;
+            while ((count = reader.read(buffer)) > 0) {
+                sendFile.write(buffer, 0, count);
             }
 //            fileScanner.useDelimiter("");
 //            writer.println(TheFileToSend.getName());

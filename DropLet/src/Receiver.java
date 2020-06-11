@@ -38,8 +38,9 @@ public class Receiver {
 //			}
 			FileOutputStream fileStream = new FileOutputStream(file, true);
 			byte[] buffer = new byte[1024];
-			while (senderInput.read(buffer) > 0) {
-				fileStream.write(buffer);
+			int count;
+			while ((count = senderInput.read(buffer)) > 0) {
+				fileStream.write(buffer, 0, count);
 			}
 
 			System.out.println("File saved to Downloads :)");
