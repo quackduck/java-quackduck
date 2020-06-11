@@ -113,7 +113,7 @@ public class Chat_Teacher {
 			System.out.println("What subject are you teaching today? :)");
 			subject = theScanner.nextLine();
 			// we don't close the scanner because if we do so it will also close System.in and we won't be able to get input later in the Chat_Student class.
-			System.out.println("The IP address of the Server is " + (InetAddress.getLocalHost().toString().split("/")[1]));
+			System.out.println("The IP address of the Server is " + (InetAddress.getLocalHost().getHostAddress()));
 			System.out.println("The Server ID is " + (ServerID = serverSock.getLocalPort()));
 			System.out.println("Share this ID with your students so they can chat with you. Keep this server running so they can connect. If you stop this, the ID may be different next time.");
 			System.out.println("You can enter commands here. Commands you can run are: \"remove <name of student to remove>\"(removes the specified student. You can also remove yourself) and \"close\"(Shuts the program down). Commands can only be run after setup(entering name, prefs etc.)");

@@ -109,7 +109,9 @@ public class Chat_Student {
 	public class CommandSender implements Runnable {
 		@Override
 		public void run() {
-			teacher.execCommands(scannerIn.nextLine());
+			while (true) {
+				teacher.execCommands(scannerIn.nextLine());
+			}
 		}
 	}
 
@@ -192,7 +194,7 @@ public class Chat_Student {
 	}
 
 	public void sendStuff() {
-		String text = outgoing.getText().strip();
+		String text = outgoing.getText().strip().toLowerCase();
 		try {
 			switch(text) {
 				case "clear":
@@ -248,9 +250,7 @@ public class Chat_Student {
 				}
 				System.out.println("You were removed or the teacher has ended the chat. The program is shutting down...");
 				close();
-			} catch (Exception e) {
-				run(); // dont stop reading just because one message was not sent.
-			}
+			} catch (Exception ignored) {}
 		}
 	}
 }

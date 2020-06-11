@@ -62,19 +62,19 @@ public class ReadWrite {
 	}
 
 	public String read() {
-		String data = "";
+		StringBuilder data = new StringBuilder();
 		try {
 			file = new File(path);
 			Scanner scan = new Scanner(file);
 			while (scan.hasNextLine()) {
-				data += scan.nextLine() + newline;	
+				data.append(scan.nextLine()).append(newline);
 			}
 			scan.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("An error occurred.");
 			e.printStackTrace();
 		}
-		return data;
+		return data.toString();
 	}
 	
 	public boolean exists() {
