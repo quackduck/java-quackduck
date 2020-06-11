@@ -2,6 +2,7 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Receiver {
 
@@ -15,12 +16,14 @@ public class Receiver {
 
 	public void go() {
 		try {
+			Scanner in = new Scanner(System.in);
 			serverSock = new ServerSocket(0);
 			System.out.println("Okie so share this code here: " + serverSock.getLocalPort());
 			System.out.println("The IP is " + (InetAddress.getLocalHost().getHostAddress()));
+			System.out.println("What would like the filename to be?");
+			String path = System.getProperty("user.home") + "/Downloads/" + in.nextLine();
 			senderSock = serverSock.accept();
 			senderInput = senderSock.getInputStream();
-			String path = System.getProperty("user.home") + "/Downloads/" + "check.mov";
 			File file = new File(path);
 			int i;
 			String[] temp = path.split("\\.", 2);
