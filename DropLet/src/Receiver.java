@@ -43,8 +43,13 @@ public class Receiver {
 			}
 
 			System.out.println("File saved to Downloads :)");
+			fileStream.flush();
+			fileStream.close();
+			senderInput.close();
+			senderSock.close();
 //			filewriter.close();
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("What in the world? I'm a red-shirt so you know what's gonna happen to me");
 			System.exit(42);
 		} ///Users/ishan/Desktop/video.mov

@@ -16,7 +16,7 @@ public class Sender {
         try {
             System.out.println("Enter the full path of the file you want to send");
             File theFileToSend = new File(in.nextLine());
-            Scanner fileScanner;
+            //Scanner fileScanner;
             System.out.println("Put in the IP please:");
             String ip = in.nextLine();
             System.out.println("Put in the Code please:");
@@ -24,7 +24,7 @@ public class Sender {
             OutputStream sendFile = senderSock.getOutputStream();
 //          fileScanner = new Scanner(TheFileToSend);
             FileInputStream reader = new FileInputStream(theFileToSend);
-            BufferedInputStream fileReader = new BufferedInputStream(reader);
+            //BufferedInputStream fileReader = new BufferedInputStream(reader);
             byte[] buffer = new byte[1024];
             while (reader.read(buffer) > 0) {
                 sendFile.write(buffer);
@@ -39,6 +39,10 @@ public class Sender {
 //                writer.write(message);
 //                writer.flush();
 //            }
+            reader.close();
+            in.close();
+            sendFile.flush();
+            sendFile.close();
             System.out.println("Boom! File sent :)");
         } catch (Exception e) {e.printStackTrace();}
     }
