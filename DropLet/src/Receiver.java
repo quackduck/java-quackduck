@@ -51,7 +51,7 @@ public class Receiver {
 			System.out.println();
 			long beforeTime = System.currentTimeMillis();
 			int i = 0;
-			int itersBeforeProgressUpdate = 1;
+			int itersBeforeProgressUpdate = 10;
 			while ((count = senderReader.read(buffer)) > 0) {
 				fileWriter.write(buffer, 0, count);
 				numOfBytesReceived += count;
