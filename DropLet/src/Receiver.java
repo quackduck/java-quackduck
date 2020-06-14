@@ -56,7 +56,7 @@ public class Receiver {
 			double donePercent = 0;
 			while ((count = senderReader.read(buffer)) > 0) {
 				fileWriter.write(buffer, 0, count);
-				numOfBytesReceived += count;
+				numOfBytesReceived += count;//
 				donePercent = 100*((double)numOfBytesReceived/(double)fileSizeInBytes);
 //				if (i % itersBeforeProgressUpdate == 0) {
 					progressPercentage(numOfBytesReceived, fileSizeInBytes, (100.0 - donePercent) * ((System.currentTimeMillis() - beforeTime)/donePercent));
