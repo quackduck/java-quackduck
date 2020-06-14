@@ -50,16 +50,19 @@ public class Receiver {
 			int count;
 			System.out.println();
 			long beforeTime = System.currentTimeMillis();
-			//int i = 0;
+			int i = 0;
+			int itersBeforeProgressUpdate = 1;
 			while ((count = senderReader.read(buffer)) > 0) {
 				fileWriter.write(buffer, 0, count);
 				numOfBytesReceived += count;
-				//if (i%10 == 0) {
-					progressPercentage(numOfBytesReceived, fileSizeInBytes, (0.001/10.0) * ((double) fileSizeInBytes - (double) numOfBytesReceived) * (((double) System.currentTimeMillis() - (double) beforeTime) / (double) count));
+				if (i % itersBeforeProgressUpdate == 0) {
+					progressPercentage(numOfBytesReceived, fileSizeInBytes, (0.001 /(double)itersBeforeProgressUpdate) * ((double) fileSizeInBytes - (double) numOfBytesReceived) * (((double) System.currentTimeMillis() - (double) beforeTime) / (double) count));
 					beforeTime = System.currentTimeMillis();
-				//}
-				//Thread.sleep(1);
-				//i++;
+				}
+				if (numOfBytesReceived == fileSizeInBytes) {
+					progressPercentage(numOfBytesReceived, fileSizeInBytes, 0);
+				}
+				i++;
 			}
 			fileWriter.flush();
 		} catch (Exception e) {e.printStackTrace();}

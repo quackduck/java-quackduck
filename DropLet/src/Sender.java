@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Sender {
 
-    public Socket senderSock = null;
+    public Socket senderSock = null;//
     public Scanner in = new Scanner(System.in);
     public OutputStream senderWriter = null;
     public FileInputStream fileReader = null;
