@@ -50,19 +50,22 @@ public class Receiver {
 			int count;
 			System.out.println();
 			long beforeTime = System.currentTimeMillis();
-			int i = 0;
-			int itersBeforeProgressUpdate = 10;
+			//int i = 0;
+			//int itersBeforeProgressUpdate = 10;
+			//double afterTime = 0.0;
+			double donePercent = 0;
 			while ((count = senderReader.read(buffer)) > 0) {
 				fileWriter.write(buffer, 0, count);
 				numOfBytesReceived += count;
-				if (i % itersBeforeProgressUpdate == 0) {
-					progressPercentage(numOfBytesReceived, fileSizeInBytes, (0.001 /(double)itersBeforeProgressUpdate) * ((double) fileSizeInBytes - (double) numOfBytesReceived) * (((double) System.currentTimeMillis() - (double) beforeTime) / (double) count));
-					beforeTime = System.currentTimeMillis();
-				}
-				if (numOfBytesReceived == fileSizeInBytes) {
-					progressPercentage(numOfBytesReceived, fileSizeInBytes, 0);
-				}
-				i++;
+				donePercent = 100*((double)numOfBytesReceived/(double)fileSizeInBytes);
+//				if (i % itersBeforeProgressUpdate == 0) {
+					progressPercentage(numOfBytesReceived, fileSizeInBytes, (100.0 - donePercent) * ((System.currentTimeMillis() - beforeTime)/donePercent));
+//					beforeTime = System.currentTimeMillis();
+//				}
+//				if (numOfBytesReceived == fileSizeInBytes) {
+//					progressPercentage(numOfBytesReceived, fileSizeInBytes, 0);
+//				}
+//				i++;
 			}
 			fileWriter.flush();
 		} catch (Exception e) {e.printStackTrace();}
@@ -77,7 +80,7 @@ public class Receiver {
 		if (done > total) {
 			throw new IllegalArgumentException();
 		}
-		int donePercents = (int) ((100 * done) / total);
+		int donePercents = (int) (100*(done/total));
 		int doneLength = size * donePercents / 100;
 		StringBuilder bar = new StringBuilder(iconLeftBoundary);
 		for (int i = 0; i < size; i++) {
