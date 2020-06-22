@@ -37,7 +37,7 @@ public class Birthday {
             System.out.println(i + "\t" + stats[i] + "\t" + (double)cumulativeSums[i]/(double)trials);
             if ((double)cumulativeSums[i]/(double)trials > 0.5) {
                 break;
-            } //
+            }
         }
     }
 }
