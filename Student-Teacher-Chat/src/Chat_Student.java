@@ -73,7 +73,7 @@ public class Chat_Student {
 					System.out.println("Oops! An error occurred.");
 					defaultSetup();
 				}
-				if(list.contains(userName.toLowerCase())) {
+				if (list.contains(userName.toLowerCase())) {
 					System.out.println("Sorry, the username in your prefs has been taken");
 					defaultSetup();
 				}
