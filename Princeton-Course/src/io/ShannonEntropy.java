@@ -27,6 +27,6 @@ public class ShannonEntropy {
         for (int i = 0; i < numberOf.length; i++) {
             sum += numberOf[i];
         }
-        System.out.println(sum);
+        StdOut.printf("%.4f", sum);
     }
 }
