@@ -3,13 +3,7 @@ public class Tester {
         Receiver receiver = new Receiver();
         Thread receiverThread = new Thread(receiver::go);
         receiverThread.start();
-        Sender sender = new Sender("127.0.0.1", receiver.code, "/Users/ishan/Desktop/video.mov");
+        Sender sender = new Sender("127.0.0.1", receiver.code, "/Users/ishan/Desktop/How.To.Train.Your.Dragon.The.Hidden.World.2019.1080p.BluRay.x264-[YTS.AM].mp4");
         sender.go();
-//        try {
-//            while (receiverThread.isAlive() || receiverThread.isAlive()) {
-//                receiverThread.wait(10);
-//                receiverThread.wait(10);
-//            }
-//        }catch (Exception e) {e.printStackTrace();}
     }
 }

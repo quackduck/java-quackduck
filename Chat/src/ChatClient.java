@@ -1,4 +1,4 @@
-import java.io.*;
+import java.io.*;ø
 import base.ReadWrite;
 import java.net.*;
 import java.util.Scanner;
@@ -34,7 +34,7 @@ public class ChatClient {
 	public void go() {
 		setUpNetworking();
 		String personName = "";
-		try { 
+		try {
 			while ((personName = reader.readLine()) != null) {
 				if (personName.strip().equals("end")) {
 					break;
@@ -46,7 +46,7 @@ public class ChatClient {
 			e.printStackTrace();
 		}
 		if (readwrite.exists()) {
-			java.util.Date date = new java.util.Date();  
+			java.util.Date date = new java.util.Date();
 			record += readwrite.read() + System.lineSeparator() + System.lineSeparator() + date.toString() + System.lineSeparator();
 		}
 
